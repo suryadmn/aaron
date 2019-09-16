@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Aaron</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+    //Spinner for Juz Al-Qur'an
+    <string-array name="juzArray">
+        <item>Juz</item>
+        <item>Juz 1</item>
+        <item>Juz 2</item>
+        <item>Juz 3</item>
+        <item>Juz 4</item>
+        <item>Juz 5</item>
+        <item>Juz 6</item>
+        <item>Juz 7</item>
+        <item>Juz 8</item>
+        <item>Juz 9</item>
+        <item>Juz 10</item>
+    </string-array>
+
+    //Spinner for Juz Al-Qur'an
+    <string-array name="surahArray">
+        <item>Surah</item>
+        <item>Al-Faatiha</item>
+        <item>Al-Baqara</item>
+        <item>Aal-Imran</item>
+        <item>An-Nisa</item>
+        <item>Al-Maaida</item>
+        <item>Al-Anaam</item>
+        <item>Al-Araaf</item>
+        <item>Al-Anfall</item>
+        <item>At-Tawba</item>
+        <item>Yunus</item>
+    </string-array>
+</resources>

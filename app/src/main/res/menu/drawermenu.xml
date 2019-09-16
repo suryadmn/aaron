@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/quraan" android:title="Al-Qur'anul Karim" android:icon="@drawable/ic_koran"/>
+    <item android:id="@+id/bookmark" android:title="Bookmark" android:icon="@drawable/ic_bookmark_black_shape"/>
+    <item android:id="@+id/tajwid" android:title="Tajwid" android:icon="@drawable/ic_quran"/>
+    <item android:id="@+id/help" android:title="Need Help?" android:icon="@drawable/ic_question_mark"/>
+    <item android:id="@+id/about" android:title="About Us" android:icon="@drawable/ic_info_button"/>
+
+</menu>
