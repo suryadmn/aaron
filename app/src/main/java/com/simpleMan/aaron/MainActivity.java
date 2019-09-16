@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 //Empty EditText
                 editText.setText("");
+
             }
         });
 
