@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Button btnGo;
     private String getData;
     private int intData;
-    boolean bookmarked = false;
+    private boolean bookmarked = false;
 
     Bundle bundle;
 
@@ -143,20 +143,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    // create an action bar button
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.mymenu, menu);
-//        return super.onCreateOptionsMenu(menu);
-//    }
-
     //Handle 3 Line navigation icons when clicked
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (toggle.onOptionsItemSelected(item)) {
-
-
-
 
             //Hide virtual keyboard
             InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
