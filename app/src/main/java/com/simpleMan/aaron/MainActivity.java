@@ -61,26 +61,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 //Get data from EditText
                 getData = editText.getText().toString();
 
-                //Toast.makeText(getApplicationContext(), "Please write a number of page", Toast.LENGTH_SHORT).show();
-
                 if (getData.isEmpty()){
                     getData="0";
                 }
+
                 intData = Integer.parseInt(getData);
                 if (intData==0){
-                    Toast.makeText(getApplicationContext(), "Please write a number page", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Number page can't be zero or empty", Toast.LENGTH_LONG).show();
                 }
-                intData-=1;
+
+                intData -= 1;
 
                 //get data from Activity and send to Fragment quraan
                 bundle = new Bundle();
                 bundle.putInt("data", intData);
 
-                quraan fragmentQuraan = new quraan();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
-                drawerLayout.closeDrawers();
-                fragmentQuraan.setArguments(bundle);
+                //Call fragment quraan from function
+                callFragmentQuraan();
+
 
                 //Hide virtual keyboard when button go pressed
                 InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -88,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 //Empty EditText
                 editText.setText("");
-
             }
         });
 
@@ -165,9 +162,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
               }else{
                   bookmarked=false;
               }
-
-                  break;
-              //app:actionViewClass="android.widget.CheckBox"
+              break;
       }
         return super.onOptionsItemSelected(item);
     }
@@ -237,12 +232,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 bundle = new Bundle();
                 bundle.putInt("data",juzData);
 
-                //Call fragment quraan
-                quraan fragmentQuraan = new quraan();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
-                drawerLayout.closeDrawers();
-                fragmentQuraan.setArguments(bundle);
+                //Call fragment quraan from function
+                callFragmentQuraan();
 
                 Toast.makeText(this, spinnerJuz.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
 
@@ -253,11 +244,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 bundle.putInt("data",juzData);
 
                 //Call fragment quraan
-                quraan fragmentQuraan = new quraan();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
-                drawerLayout.closeDrawers();
-                fragmentQuraan.setArguments(bundle);
+                callFragmentQuraan();
 
                 Toast.makeText(this, spinnerJuz.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
 
@@ -267,12 +254,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 bundle = new Bundle();
                 bundle.putInt("data",juzData);
 
-                //Call fragment quraan
-                quraan fragmentQuraan = new quraan();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
-                drawerLayout.closeDrawers();
-                fragmentQuraan.setArguments(bundle);
+                //Call fragment quraan from function
+                callFragmentQuraan();
 
                 Toast.makeText(this, spinnerJuz.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
             }
@@ -288,12 +271,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 bundle = new Bundle();
                 bundle.putInt("data",surahData);
 
-                //Call fragment quraan
-                quraan fragmentQuraan = new quraan();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
-                drawerLayout.closeDrawers();
-                fragmentQuraan.setArguments(bundle);
+                //Call fragment quraan from function
+                callFragmentQuraan();
 
                 Toast.makeText(this, spinnerSurah.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
 
@@ -302,12 +281,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 bundle = new Bundle();
                 bundle.putInt("data",surahData);
 
-                //Call fragment quraan
-                quraan fragmentQuraan = new quraan();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
-                drawerLayout.closeDrawers();
-                fragmentQuraan.setArguments(bundle);
+                //Call fragment quraan from function
+                callFragmentQuraan();
 
                 Toast.makeText(this, spinnerSurah.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
 
@@ -316,21 +291,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 bundle = new Bundle();
                 bundle.putInt("data",surahData);
 
-                //Call fragment quraan
-                quraan fragmentQuraan = new quraan();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
-                drawerLayout.closeDrawers();
-                fragmentQuraan.setArguments(bundle);
+                //Call fragment quraan from function
+                callFragmentQuraan();
 
                 Toast.makeText(this, spinnerSurah.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
             }
-            //Toast.makeText(this, "You clicked " + spinner.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
+        //Do nothing
+    }
 
+    public void callFragmentQuraan() {
+        quraan fragmentQuraan = new quraan();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
+        drawerLayout.closeDrawers();
+        //save data to bundle
+        fragmentQuraan.setArguments(bundle);
     }
 }
