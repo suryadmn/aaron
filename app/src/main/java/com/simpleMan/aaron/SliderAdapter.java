@@ -1,19 +1,28 @@
 package com.simpleMan.aaron;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.viewpager.widget.PagerAdapter;
 
 public class SliderAdapter extends PagerAdapter {
 
     Context context;
     LayoutInflater layoutInflater;
+    AlertDialog.Builder dialogBuilder;
+    AlertDialog alertDialog;
 
     public SliderAdapter(Context context){
         this.context = context;
@@ -85,7 +94,7 @@ public class SliderAdapter extends PagerAdapter {
 
     @NonNull
     @Override
-    public Object instantiateItem(@NonNull ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, final int position) {
 
         layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.slide_layout, container, false);
@@ -95,11 +104,43 @@ public class SliderAdapter extends PagerAdapter {
         slideImageView.setRotationY(180);
         container.addView(view);
 
+        slideImageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public boolean onLongClick(View view) {
+                showAlertDialog(R.layout.popup_layout);
+                Toast.makeText(view.getContext(), "You log press me! "+position, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
         return view;
     }
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((LinearLayout)object);
+    }
+
+    //Function handle popup
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void showAlertDialog(int layout){
+
+        layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        View layoutView = layoutInflater.inflate(layout, null);
+        dialogBuilder = new AlertDialog.Builder(layoutView.getContext());
+        Button dialogButton = layoutView.findViewById(R.id.btnDialog);
+
+        dialogBuilder.setView(layoutView);
+        dialogBuilder.create();
+        alertDialog = dialogBuilder.create();
+        alertDialog.show();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
     }
 }

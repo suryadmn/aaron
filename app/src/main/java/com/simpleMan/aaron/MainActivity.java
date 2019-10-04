@@ -10,7 +10,10 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,15 +41,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String getData;
     private int intData;
     private boolean bookmarked = false;
+    private quraan fragmentQuraan;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     Bundle bundle;
+    int dataBookmark;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Get id
+        //initialize
         drawerLayout = findViewById(R.id.drawer);
         navigationView = findViewById(R.id.nView);
         spinnerJuz = findViewById(R.id.juzSpinner);
@@ -54,7 +61,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         editText = findViewById(R.id.editText);
         btnGo = findViewById(R.id.btnGo);
 
-        //Get data from edittext and call fragment quraan
+        sharedPreferences = getSharedPreferences("Aaron",0);
+        editor = sharedPreferences.edit();
+        editor.apply();
+
+        //Display qura'an default view when first time apps open
+        callFragmentQuraan();
+
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
 
                 intData = Integer.parseInt(getData);
-                if (intData==0){
+                if (intData == 0){
                     Toast.makeText(getApplicationContext(), "Number page can't be zero or empty", Toast.LENGTH_LONG).show();
                 }
 
@@ -88,12 +101,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 editText.setText("");
             }
         });
-
-        //Display qura'an default view when first time apps open
-        quraan fragmentQuraan = new quraan();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.flContent, fragmentQuraan);
-        transaction.commit();
 
         //Limit spinner popup juz
         try {
@@ -155,13 +162,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
       switch (item.getItemId()){
           case R.id.mybutton:
               item.setIcon(bookmarked ? R.drawable.ic_bookmark_border_white_24dp : R.drawable.ic_bookmark_white_24dp);
-              Toast.makeText(getApplicationContext(),"Click!", Toast.LENGTH_SHORT).show();
 
               if (!bookmarked){
-                  bookmarked=true;
+                  bookmarked = true;
               }else{
-                  bookmarked=false;
+                  bookmarked = false;
               }
+
+              if (bookmarked == true){
+                  //Get data from viewpager
+                  fragmentQuraan.setOnGetPositionListener(new quraan.OnGetPositionListener() {
+                      @Override
+                      public void getPosition(int position) {
+                          editor.putInt("pagerPosition", position);
+                          editor.commit();
+                          Log.i("wew",position+"");
+                      }
+                  });
+              }
+
               break;
       }
         return super.onOptionsItemSelected(item);
@@ -305,11 +324,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void callFragmentQuraan() {
-        quraan fragmentQuraan = new quraan();
+        fragmentQuraan = new quraan();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
         drawerLayout.closeDrawers();
         //save data to bundle
         fragmentQuraan.setArguments(bundle);
     }
+
 }

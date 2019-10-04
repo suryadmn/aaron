@@ -1,5 +1,6 @@
 package com.simpleMan.aaron;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
@@ -22,10 +24,13 @@ import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 public class quraan extends Fragment {
 
     private View view;
+    private ImageView slideImages;
+    private OnGetPositionListener listener;
 
     SliderAdapter sliderAdapter;
     ViewPager viewPager;
-    GestureDetector tapGestureDetector;
+
+    int intBookmark;
 
     public quraan() {
         // Required empty public constructor
@@ -37,6 +42,19 @@ public class quraan extends Fragment {
 
     }
 
+    public void setOnGetPositionListener(OnGetPositionListener listener){
+        this.listener = listener;
+        getPagerPosition();
+    }
+
+    void getPagerPosition(){
+        listener.getPosition(viewPager.getCurrentItem());
+    }
+
+    interface OnGetPositionListener{
+        void getPosition(int position);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -45,18 +63,15 @@ public class quraan extends Fragment {
 
         //Initialize
         viewPager = (ViewPager) view.findViewById(R.id.slideViewPager);
+        slideImages = (ImageView) view.findViewById(R.id.slideImages);
 
         //Call adapter slider
         sliderAdapter = new SliderAdapter(getContext());
         viewPager.setAdapter(sliderAdapter);
         viewPager.setRotationY(180);
 
-        /*viewPager.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getContext(),"Click!", Toast.LENGTH_SHORT).show();
-            }
-        });*/
+        //Long click listener
+
 
         //Set position of item quraan
         if (getArguments() == null) {
@@ -66,11 +81,10 @@ public class quraan extends Fragment {
             viewPager.setCurrentItem(intData);
         }
 
-        //Toast.makeText(getContext(),"Click!", Toast.LENGTH_SHORT).show();
+        //For bookmark icons, that display just on quraan fragment
+        setHasOptionsMenu(true);
 
         //Return view from inflater
-
-        setHasOptionsMenu(true);
         return view;
     }
 
