@@ -19,10 +19,11 @@ import androidx.viewpager.widget.PagerAdapter;
 
 public class SliderAdapter extends PagerAdapter {
 
-    Context context;
-    LayoutInflater layoutInflater;
-    AlertDialog.Builder dialogBuilder;
-    AlertDialog alertDialog;
+    private Context context;
+    private LayoutInflater layoutInflater;
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog alertDialog;
+    private OnPagerClickListener mListener;
 
     public SliderAdapter(Context context){
         this.context = context;
@@ -92,6 +93,14 @@ public class SliderAdapter extends PagerAdapter {
         return view == (LinearLayout) object;
     }
 
+    public interface OnPagerClickListener {
+        void onPager(int position);
+    }
+
+    public void setOnPagerClickListener(OnPagerClickListener listener){
+        mListener = listener;
+    }
+
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
@@ -104,12 +113,12 @@ public class SliderAdapter extends PagerAdapter {
         slideImageView.setRotationY(180);
         container.addView(view);
 
+        //getPosition(position);
         slideImageView.setOnLongClickListener(new View.OnLongClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public boolean onLongClick(View view) {
-                showAlertDialog(R.layout.popup_layout);
-                Toast.makeText(view.getContext(), "You log press me! "+position, Toast.LENGTH_SHORT).show();
+                showAlertDialog(R.layout.bookmark_popup, position);
                 return false;
             }
         });
@@ -124,22 +133,25 @@ public class SliderAdapter extends PagerAdapter {
 
     //Function handle popup
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void showAlertDialog(int layout){
+    private void showAlertDialog(int layout, final int position){
 
         layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View layoutView = layoutInflater.inflate(layout, null);
         dialogBuilder = new AlertDialog.Builder(layoutView.getContext());
-        Button dialogButton = layoutView.findViewById(R.id.btnDialog);
+        Button saveButton = layoutView.findViewById(R.id.saveButton);
 
         dialogBuilder.setView(layoutView);
         dialogBuilder.create();
         alertDialog = dialogBuilder.create();
         alertDialog.show();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialogButton.setOnClickListener(new View.OnClickListener() {
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 alertDialog.dismiss();
+                mListener.onPager(position);
+                Toast.makeText(view.getContext(), "Bookmark saved "+position, Toast.LENGTH_SHORT).show();
             }
         });
     }

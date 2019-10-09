@@ -1,36 +1,38 @@
 package com.simpleMan.aaron;
 
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import android.view.GestureDetector;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class quraan extends Fragment {
 
     private View view;
     private ImageView slideImages;
     private OnGetPositionListener listener;
+    private ArrayList<bookmarkItem> mBookmarkList  = new ArrayList<>();
 
-    SliderAdapter sliderAdapter;
-    ViewPager viewPager;
-
-    int intBookmark;
+    private SliderAdapter sliderAdapter;
+    private ViewPager viewPager;
+    private bookmarkAdapter mAdapter;
 
     public quraan() {
         // Required empty public constructor
@@ -70,8 +72,11 @@ public class quraan extends Fragment {
         viewPager.setAdapter(sliderAdapter);
         viewPager.setRotationY(180);
 
-        //Long click listener
+        //Call adapter bookmark
+        mAdapter = new bookmarkAdapter(mBookmarkList);
 
+        //Load data arrayList
+        loadData();
 
         //Set position of item quraan
         if (getArguments() == null) {
@@ -84,14 +89,56 @@ public class quraan extends Fragment {
         //For bookmark icons, that display just on quraan fragment
         setHasOptionsMenu(true);
 
+        sliderAdapter.setOnPagerClickListener(new SliderAdapter.OnPagerClickListener() {
+            @Override
+            public void onPager(int position) {
+                insertItem(0);
+                saveData();
+
+
+                //info
+                String dataInfo = saveData();
+                Log.i("Info data ArrayList",""+dataInfo);
+                Log.i("info pager",""+position);
+            }
+        });
+
         //Return view from inflater
         return view;
     }
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.mymenu, menu);
 
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    public void insertItem(int position){
+        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page  ", "New surah", "New juz"));
+        mAdapter.notifyItemInserted(position);
+    }
+
+    public String saveData(){
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("Shared Preferences Bookmark", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(mBookmarkList);
+        editor.putString("key", json);
+        editor.apply();
+        return json;
+    }
+
+    public void loadData(){
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("Shared Preferences Bookmark", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("key", null);
+        Type type = new TypeToken<ArrayList<bookmarkItem>>() {}.getType();
+        mBookmarkList = gson.fromJson(json, type);
+
+        if (mBookmarkList == null){
+            mBookmarkList = new ArrayList<>();
+        }
     }
 }

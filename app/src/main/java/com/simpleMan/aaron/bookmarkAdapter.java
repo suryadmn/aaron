@@ -14,41 +14,73 @@ import java.util.ArrayList;
 public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.BookmarkViewHolder> {
 
     private ArrayList<bookmarkItem> mBookmarkList;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+        void onDeleteCLick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
 
     public static class BookmarkViewHolder extends RecyclerView.ViewHolder{
-
         public ImageView mImageView;
+        public ImageView mImageDelete;
         public TextView mTxt1;
         public TextView mTxt2;
         public TextView mTxt3;
 
-        public BookmarkViewHolder(@NonNull View itemView) {
+        public BookmarkViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
 
             mImageView = itemView.findViewById(R.id.imageView);
+            mImageDelete = itemView.findViewById(R.id.img_delete);
             mTxt1 = itemView.findViewById(R.id.textView1);
             mTxt2 = itemView.findViewById(R.id.textView2);
             mTxt3 = itemView.findViewById(R.id.textView3);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+
+            mImageDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onDeleteCLick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
     public bookmarkAdapter(ArrayList<bookmarkItem> bookmarkList){
-
         mBookmarkList = bookmarkList;
-
     }
 
     @NonNull
     @Override
     public BookmarkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bookmark_item, parent, false);
-        BookmarkViewHolder bvh = new BookmarkViewHolder(view);
+        BookmarkViewHolder bvh = new BookmarkViewHolder(view, mListener);
         return bvh;
     }
 
     @Override
     public void onBindViewHolder(@NonNull BookmarkViewHolder holder, int position) {
-
         bookmarkItem currentItem = mBookmarkList.get(position);
 
         holder.mImageView.setImageResource(currentItem.getmImageResource());
