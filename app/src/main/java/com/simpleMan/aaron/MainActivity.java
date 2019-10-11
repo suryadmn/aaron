@@ -44,9 +44,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private quraan fragmentQuraan;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-
-    Bundle bundle;
-    int dataBookmark;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

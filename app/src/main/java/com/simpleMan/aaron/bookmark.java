@@ -1,15 +1,26 @@
 package com.simpleMan.aaron;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import android.util.Log;
+import android.view.ActionProvider;
+import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,8 +39,11 @@ public class bookmark extends Fragment {
     private bookmarkAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<bookmarkItem> mBookmarkList;
+    private Button buttonSave;
+    private Bundle bundle;
+    private MenuItem menuItem;
 
-    private Button buttonAdd, buttonSave;
+    int quraanPosition;
 
     public bookmark() {
         // Required empty public constructor
@@ -46,8 +60,6 @@ public class bookmark extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_bookmark, container, false);
 
-
-
         //initialize array list
         createBookmarkList();
 
@@ -63,7 +75,7 @@ public class bookmark extends Fragment {
     }
 
     public void insertItem(int position){
-        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page  ", "New surah", "New juz"));
+        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page  ", position, "New juz"));
         mAdapter.notifyItemInserted(position);
     }
 
@@ -94,7 +106,23 @@ public class bookmark extends Fragment {
         mAdapter.setOnItemClickListener(new bookmarkAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                changeItem(position, "Clicked");
+
+                mAdapter.setOnPagerClickListener(new bookmarkAdapter.OnPagerClickListener() {
+                    @Override
+                    public void OnPagerClick(int position) {
+                        bundle = new Bundle();
+                        bundle.putInt("data",position);
+                        quraan fragmentQuraan = new quraan();
+                        FragmentManager fragmentManager = getFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
+                        //save data to bundle
+                        fragmentQuraan.setArguments(bundle);
+
+                        Log.i("Position Fbookmark",""+position);
+                    }
+                });
+
+                //changeItem(position, "Clicked");
             }
 
             @Override
@@ -105,21 +133,16 @@ public class bookmark extends Fragment {
     }
 
     public void setButtons(){
-        buttonAdd = view.findViewById(R.id.btnAdd);
         buttonSave = view.findViewById(R.id.btnSave);
-
-        buttonAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int position = 0;
-                insertItem(position);
-
-            }
-        });
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Insert data
+                int position = 0;
+                insertItem(position);
+
+                //save data to sharedPref
                 saveData();
 
                 //get info

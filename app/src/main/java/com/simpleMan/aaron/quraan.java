@@ -34,6 +34,8 @@ public class quraan extends Fragment {
     private ViewPager viewPager;
     private bookmarkAdapter mAdapter;
 
+    private int mPager;
+
     public quraan() {
         // Required empty public constructor
     }
@@ -84,6 +86,7 @@ public class quraan extends Fragment {
         }else{
             int intData = getArguments().getInt("data");
             viewPager.setCurrentItem(intData);
+            Log.i("Info data pager",""+intData);
         }
 
         //For bookmark icons, that display just on quraan fragment
@@ -92,9 +95,10 @@ public class quraan extends Fragment {
         sliderAdapter.setOnPagerClickListener(new SliderAdapter.OnPagerClickListener() {
             @Override
             public void onPager(int position) {
-                insertItem(0);
-                saveData();
+                insertItem(0, position);
 
+                //Save all data to sharedPref
+                saveData();
 
                 //info
                 String dataInfo = saveData();
@@ -115,8 +119,13 @@ public class quraan extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    public void insertItem(int position){
-        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page  ", "New surah", "New juz"));
+    public void insertItem(int position, int pager){
+        //For pager
+        mPager = pager;
+        mPager += 1;
+
+        //Insert data item
+        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page  "+mPager, mPager, "New juz"));
         mAdapter.notifyItemInserted(position);
     }
 
@@ -141,4 +150,5 @@ public class quraan extends Fragment {
             mBookmarkList = new ArrayList<>();
         }
     }
+
 }

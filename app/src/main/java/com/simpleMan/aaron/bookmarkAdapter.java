@@ -1,5 +1,8 @@
 package com.simpleMan.aaron;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,12 +12,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.BookmarkViewHolder> {
 
     private ArrayList<bookmarkItem> mBookmarkList;
     private OnItemClickListener mListener;
+    private OnPagerClickListener mPagerListener;
+    private int getPagerPositon;
 
     public interface OnItemClickListener {
         void onItemClick(int position);
@@ -25,7 +34,27 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
         mListener = listener;
     }
 
-    public static class BookmarkViewHolder extends RecyclerView.ViewHolder{
+    //------------get Pager Position--------//
+    public interface OnPagerClickListener {
+        void OnPagerClick(int position);
+    }
+
+    public int getPagerClickPosition(int position){
+        getPagerPositon = position;
+        return getPagerPositon;
+    }
+
+    public void setPagerClickPosition(){
+        mPagerListener.OnPagerClick(getPagerPositon);
+    }
+
+    public void setOnPagerClickListener(OnPagerClickListener listener){
+        mPagerListener = listener;
+        setPagerClickPosition();
+    }
+    //-----------------------------------//
+
+    public class BookmarkViewHolder extends RecyclerView.ViewHolder{
         public ImageView mImageView;
         public ImageView mImageDelete;
         public TextView mTxt1;
@@ -60,6 +89,10 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
                             listener.onDeleteCLick(position);
+                            saveData(view);
+
+                            //Info
+                            Log.i("Info array",""+saveData(view));
                         }
                     }
                 }
@@ -83,15 +116,41 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
     public void onBindViewHolder(@NonNull BookmarkViewHolder holder, int position) {
         bookmarkItem currentItem = mBookmarkList.get(position);
 
+        String dataPosition = String.valueOf(currentItem.getmTxt2());
+
+        getPagerClickPosition(currentItem.getmTxt2());
+
         holder.mImageView.setImageResource(currentItem.getmImageResource());
         holder.mTxt1.setText(currentItem.getmTxt1());
-        holder.mTxt2.setText(currentItem.getmTxt2());
+        holder.mTxt2.setText(dataPosition);
         holder.mTxt3.setText(currentItem.getmTxt3());
     }
 
     @Override
     public int getItemCount() {
         return mBookmarkList.size();
+    }
+
+    public String saveData(View view){
+        SharedPreferences sharedPreferences = view.getContext().getSharedPreferences("Shared Preferences Bookmark", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(mBookmarkList);
+        editor.putString("key", json);
+        editor.apply();
+        return json;
+    }
+
+    public void loadData(View view) {
+        SharedPreferences sharedPreferences = view.getContext().getSharedPreferences("Shared Preferences Bookmark", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("key", null);
+        Type type = new TypeToken<ArrayList<bookmarkItem>>() {}.getType();
+        mBookmarkList = gson.fromJson(json, type);
+
+        if (mBookmarkList == null) {
+            mBookmarkList = new ArrayList<>();
+        }
     }
 
 }
