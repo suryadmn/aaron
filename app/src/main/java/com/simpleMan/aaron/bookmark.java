@@ -1,5 +1,7 @@
 package com.simpleMan.aaron;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SpinnerAdapter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,8 +46,7 @@ public class bookmark extends Fragment {
     private Button buttonSave;
     private Bundle bundle;
     private MenuItem menuItem;
-
-    int quraanPosition;
+    private ActionBar ActionBar;
 
     public bookmark() {
         // Required empty public constructor
@@ -63,6 +66,7 @@ public class bookmark extends Fragment {
         //initialize array list
         createBookmarkList();
 
+        //Load data from shared and show it to view
         loadData();
 
         //Initialize RecyclerView and Stuff
@@ -106,23 +110,21 @@ public class bookmark extends Fragment {
         mAdapter.setOnItemClickListener(new bookmarkAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+                int mPosition = mBookmarkList.get(position).getmTxt2();
+                mPosition -= 1;
 
-                mAdapter.setOnPagerClickListener(new bookmarkAdapter.OnPagerClickListener() {
-                    @Override
-                    public void OnPagerClick(int position) {
-                        bundle = new Bundle();
-                        bundle.putInt("data",position);
-                        quraan fragmentQuraan = new quraan();
-                        FragmentManager fragmentManager = getFragmentManager();
-                        fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
-                        //save data to bundle
-                        fragmentQuraan.setArguments(bundle);
+                //Send data to bundle quraan
+                bundle = new Bundle();
+                bundle.putInt("data",mPosition);
+                quraan fragmentQuraan = new quraan();
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
+                fragmentQuraan.setArguments(bundle);
+                FragmentActivity actionBar = getActivity();
+                actionBar.setTitle("Al-Qur'anul Karim");
 
-                        Log.i("Position Fbookmark",""+position);
-                    }
-                });
-
-                //changeItem(position, "Clicked");
+                //Info
+                Log.i("Position mBookmark",""+mPosition);
             }
 
             @Override

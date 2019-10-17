@@ -4,18 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,7 +23,6 @@ public class quraan extends Fragment {
 
     private View view;
     private ImageView slideImages;
-    private OnGetPositionListener listener;
     private ArrayList<bookmarkItem> mBookmarkList  = new ArrayList<>();
 
     private SliderAdapter sliderAdapter;
@@ -44,19 +39,6 @@ public class quraan extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-    }
-
-    public void setOnGetPositionListener(OnGetPositionListener listener){
-        this.listener = listener;
-        getPagerPosition();
-    }
-
-    void getPagerPosition(){
-        listener.getPosition(viewPager.getCurrentItem());
-    }
-
-    interface OnGetPositionListener{
-        void getPosition(int position);
     }
 
     @Override
@@ -86,11 +68,8 @@ public class quraan extends Fragment {
         }else{
             int intData = getArguments().getInt("data");
             viewPager.setCurrentItem(intData);
-            Log.i("Info data pager",""+intData);
+            Log.i("Position mQuraan",""+intData);
         }
-
-        //For bookmark icons, that display just on quraan fragment
-        setHasOptionsMenu(true);
 
         sliderAdapter.setOnPagerClickListener(new SliderAdapter.OnPagerClickListener() {
             @Override
@@ -109,14 +88,6 @@ public class quraan extends Fragment {
 
         //Return view from inflater
         return view;
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.mymenu, menu);
-
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public void insertItem(int position, int pager){

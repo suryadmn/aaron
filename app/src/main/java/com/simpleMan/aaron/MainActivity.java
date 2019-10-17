@@ -1,25 +1,21 @@
 package com.simpleMan.aaron;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -40,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Button btnGo;
     private String getData;
     private int intData;
-    private boolean bookmarked = false;
     private quraan fragmentQuraan;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -142,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         toggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupDrawerContent(navigationView);
-
     }
 
     //Handle 3 Line navigation icons when clicked
@@ -156,31 +150,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             return true;
         }
-
-      switch (item.getItemId()){
-          case R.id.mybutton:
-              item.setIcon(bookmarked ? R.drawable.ic_bookmark_border_white_24dp : R.drawable.ic_bookmark_white_24dp);
-
-              if (!bookmarked){
-                  bookmarked = true;
-              }else{
-                  bookmarked = false;
-              }
-
-              if (bookmarked == true){
-                  //Get data from viewpager
-                  fragmentQuraan.setOnGetPositionListener(new quraan.OnGetPositionListener() {
-                      @Override
-                      public void getPosition(int position) {
-                          editor.putInt("pagerPosition", position);
-                          editor.commit();
-                          Log.i("wew",position+"");
-                      }
-                  });
-              }
-
-              break;
-      }
         return super.onOptionsItemSelected(item);
     }
 
@@ -328,6 +297,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         drawerLayout.closeDrawers();
         //save data to bundle
         fragmentQuraan.setArguments(bundle);
+        //Set Title action bar
+        ActionBar actionBar = this.getSupportActionBar();
+        actionBar.setTitle("Al-Qur'anul Karim");
     }
 
 }

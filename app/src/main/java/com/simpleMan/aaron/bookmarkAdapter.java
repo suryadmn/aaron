@@ -22,8 +22,6 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
 
     private ArrayList<bookmarkItem> mBookmarkList;
     private OnItemClickListener mListener;
-    private OnPagerClickListener mPagerListener;
-    private int getPagerPositon;
 
     public interface OnItemClickListener {
         void onItemClick(int position);
@@ -33,26 +31,6 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
     public void setOnItemClickListener(OnItemClickListener listener){
         mListener = listener;
     }
-
-    //------------get Pager Position--------//
-    public interface OnPagerClickListener {
-        void OnPagerClick(int position);
-    }
-
-    public int getPagerClickPosition(int position){
-        getPagerPositon = position;
-        return getPagerPositon;
-    }
-
-    public void setPagerClickPosition(){
-        mPagerListener.OnPagerClick(getPagerPositon);
-    }
-
-    public void setOnPagerClickListener(OnPagerClickListener listener){
-        mPagerListener = listener;
-        setPagerClickPosition();
-    }
-    //-----------------------------------//
 
     public class BookmarkViewHolder extends RecyclerView.ViewHolder{
         public ImageView mImageView;
@@ -115,10 +93,7 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
     @Override
     public void onBindViewHolder(@NonNull BookmarkViewHolder holder, int position) {
         bookmarkItem currentItem = mBookmarkList.get(position);
-
-        String dataPosition = String.valueOf(currentItem.getmTxt2());
-
-        getPagerClickPosition(currentItem.getmTxt2());
+        String dataPosition = String.valueOf(mBookmarkList.get(position).getmTxt2());
 
         holder.mImageView.setImageResource(currentItem.getmImageResource());
         holder.mTxt1.setText(currentItem.getmTxt1());
