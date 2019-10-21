@@ -1,7 +1,6 @@
 package com.simpleMan.aaron;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -11,7 +10,6 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -84,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 //Call fragment quraan from function
                 callFragmentQuraan();
-
 
                 //Hide virtual keyboard when button go pressed
                 InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -207,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     //Handle spinner when choosen
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        //For Spinner JUZ
+        /** For Juz */
         if (adapterView.getId() == R.id.juzSpinner){
             if (spinnerJuz.getSelectedItemPosition() == 0){
                 //Do Nothing
@@ -246,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Toast.makeText(this, spinnerJuz.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
             }
 
-        //For spinner surah
+        /** For spinner surah */
         }else if (adapterView.getId() == R.id.surahSpinner){
             //get data from Activity and send to Fragment quraan
             if (spinnerSurah.getSelectedItemPosition() == 0){
@@ -297,9 +294,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         drawerLayout.closeDrawers();
         //save data to bundle
         fragmentQuraan.setArguments(bundle);
-        //Set Title action bar
-        ActionBar actionBar = this.getSupportActionBar();
-        actionBar.setTitle("Al-Qur'anul Karim");
     }
 
 }

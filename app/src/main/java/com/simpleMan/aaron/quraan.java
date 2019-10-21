@@ -96,7 +96,7 @@ public class quraan extends Fragment {
         mPager += 1;
 
         //Insert data item
-        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page  "+mPager, mPager, "New juz"));
+        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page", mPager, "   New juz"));
         mAdapter.notifyItemInserted(position);
     }
 
