@@ -6,12 +6,6 @@
     android:orientation="vertical"
     tools:context=".bookmark">
 
-    <TextView
-        android:id="@+id/txtEmptyBoomark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="50sp"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reyclerView"
         android:layout_width="match_parent"

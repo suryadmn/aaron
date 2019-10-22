@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,7 +36,6 @@ public class bookmark extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<bookmarkItem> mBookmarkList;
     private Bundle bundle;
-    private TextView emptyBookmark;
 
     public bookmark() {
         // Required empty public constructor
@@ -55,8 +53,6 @@ public class bookmark extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_bookmark, container, false);
-
-        emptyBookmark = view.findViewById(R.id.txtEmptyBoomark);
 
         //initialize array list
         createBookmarkList();
