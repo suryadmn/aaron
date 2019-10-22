@@ -116,16 +116,4 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
         return json;
     }
 
-    public void loadData(View view) {
-        SharedPreferences sharedPreferences = view.getContext().getSharedPreferences("Shared Preferences Bookmark", Context.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("key", null);
-        Type type = new TypeToken<ArrayList<bookmarkItem>>() {}.getType();
-        mBookmarkList = gson.fromJson(json, type);
-
-        if (mBookmarkList == null) {
-            mBookmarkList = new ArrayList<>();
-        }
-    }
-
 }

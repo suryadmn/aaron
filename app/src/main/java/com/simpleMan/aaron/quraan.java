@@ -74,6 +74,7 @@ public class quraan extends Fragment {
         sliderAdapter.setOnPagerClickListener(new SliderAdapter.OnPagerClickListener() {
             @Override
             public void onPager(int position) {
+                //Insert data to array mBookmarkList
                 insertItem(0, position);
 
                 //Save all data to sharedPref

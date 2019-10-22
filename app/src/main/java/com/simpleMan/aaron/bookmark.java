@@ -1,9 +1,15 @@
 package com.simpleMan.aaron;
 
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -13,7 +19,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -41,6 +49,8 @@ public class bookmark extends Fragment {
 
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -52,8 +62,7 @@ public class bookmark extends Fragment {
         createBookmarkList();
 
         //Load data from shared and show it to view
-       loadData();
-
+        loadData();
 
         //Initialize RecyclerView and Stuff
         buildRecyclerView();
@@ -107,6 +116,8 @@ public class bookmark extends Fragment {
         });
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public String loadData(){
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("Shared Preferences Bookmark", Context.MODE_PRIVATE);
         Gson gson = new Gson();
@@ -114,9 +125,42 @@ public class bookmark extends Fragment {
         Type type = new TypeToken<ArrayList<bookmarkItem>>() {}.getType();
         mBookmarkList = gson.fromJson(json, type);
 
-        if (mBookmarkList == null){
-            mBookmarkList = new ArrayList<>();
+        if (mBookmarkList.isEmpty()){
+            showAlertDialog(R.layout.no_bookmark_popup);
         }
         return json;
+    }
+
+    /**Function handle popup*/
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void showAlertDialog(int layout){
+
+        LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
+        View layoutView = layoutInflater.inflate(layout, null);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(layoutView.getContext());
+        Button addButton = layoutView.findViewById(R.id.addButton);
+
+        dialogBuilder.setView(layoutView);
+        dialogBuilder.create();
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        //Show action when addButton was clicked
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)  {
+                //Go to fragment quraan when addButton click
+                quraan fragmentQuraan = new quraan();
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
+                fragmentQuraan.setArguments(bundle);
+                FragmentActivity actionBar = getActivity();
+                actionBar.setTitle("Al-Qur'anul Karim");
+
+                //Close popup when addButton clicked
+                alertDialog.dismiss();
+            }
+        });
     }
 }
