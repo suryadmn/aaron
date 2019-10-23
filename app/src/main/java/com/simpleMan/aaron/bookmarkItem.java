@@ -13,10 +13,6 @@ public class bookmarkItem {
         mTxt3 = txt3;
     }
 
-    public void changeText1(String text){
-        mTxt1 = text;
-    }
-
     public int getmImageResource(){
         return mImageResource;
     }

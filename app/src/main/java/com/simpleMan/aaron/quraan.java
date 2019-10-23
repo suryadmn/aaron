@@ -30,6 +30,7 @@ public class quraan extends Fragment {
     private bookmarkAdapter mAdapter;
 
     private int mPager;
+    private String strJuz;
 
     public quraan() {
         // Required empty public constructor
@@ -87,6 +88,7 @@ public class quraan extends Fragment {
             }
         });
 
+
         //Return view from inflater
         return view;
     }
@@ -96,8 +98,17 @@ public class quraan extends Fragment {
         mPager = pager;
         mPager += 1;
 
+        //Get string Txt Juz
+        if (pager <= 20) {
+            strJuz = "1";
+        }else
+
+        if (pager <= 40) {
+            strJuz = "2";
+        }
+
         //Insert data item
-        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page", mPager, "   New juz"));
+        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page", mPager, "juz  "+strJuz));
         mAdapter.notifyItemInserted(position);
     }
 
@@ -122,5 +133,4 @@ public class quraan extends Fragment {
             mBookmarkList = new ArrayList<>();
         }
     }
-
 }
