@@ -80,7 +80,19 @@ public class SliderAdapter extends PagerAdapter {
             R.drawable.page47,
             R.drawable.page48,
             R.drawable.page49,
-            R.drawable.page50
+            R.drawable.page50,
+            R.drawable.page51,
+            R.drawable.page52,
+            R.drawable.page53,
+            R.drawable.page54,
+            R.drawable.page55,
+            R.drawable.page56,
+            R.drawable.page57,
+            R.drawable.page58,
+            R.drawable.page59,
+            R.drawable.page60,
+            R.drawable.page61,
+            R.drawable.page62
     };
 
     @Override

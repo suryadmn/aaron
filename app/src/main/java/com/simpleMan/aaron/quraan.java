@@ -42,6 +42,7 @@ public class quraan extends Fragment {
 
     }
 
+    /**OnCreateView*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -93,6 +94,7 @@ public class quraan extends Fragment {
         return view;
     }
 
+    /**Insert data*/
     public void insertItem(int position, int pager){
         //For pager
         mPager = pager;
@@ -101,17 +103,18 @@ public class quraan extends Fragment {
         //Get string Txt Juz
         if (pager <= 20) {
             strJuz = "1";
-        }else
-
-        if (pager <= 40) {
+        }else if (pager <= 40) {
             strJuz = "2";
+        }else if (pager <= 60) {
+            strJuz = "3";
         }
 
         //Insert data item
-        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page", mPager, "juz  "+strJuz));
+        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page", mPager, "|    juz  "+strJuz));
         mAdapter.notifyItemInserted(position);
     }
 
+    /**Save data to SharedPref*/
     public String saveData(){
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("Shared Preferences Bookmark", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -122,6 +125,7 @@ public class quraan extends Fragment {
         return json;
     }
 
+    /**Load data from SharedPef*/
     public void loadData(){
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("Shared Preferences Bookmark", Context.MODE_PRIVATE);
         Gson gson = new Gson();
