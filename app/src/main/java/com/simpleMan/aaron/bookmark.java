@@ -66,16 +66,18 @@ public class bookmark extends Fragment {
         return view;
     }
 
+    /**Remove item from bookmarkList*/
     public void removeItem(int position){
         mBookmarkList.remove(position);
         mAdapter.notifyItemRemoved(position);
     }
 
+    /**Create object BookmarkList*/
     public void createBookmarkList(){
         mBookmarkList = new ArrayList<>();
     }
 
-
+    /**Build RecyclerView*/
     public void buildRecyclerView() {
         mRecyclerView = view.findViewById(R.id.reyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -112,6 +114,7 @@ public class bookmark extends Fragment {
         });
     }
 
+    /**Load data from SharedPref*/
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public String loadData(){
@@ -121,9 +124,11 @@ public class bookmark extends Fragment {
         Type type = new TypeToken<ArrayList<bookmarkItem>>() {}.getType();
         mBookmarkList = gson.fromJson(json, type);
 
+        //Check is data array from bookmarkList empty
         if (mBookmarkList.isEmpty()){
             showAlertDialog(R.layout.no_bookmark_popup);
         }
+
         return json;
     }
 

@@ -13,9 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.BookmarkViewHolder> {
@@ -38,6 +35,7 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
         public TextView mTxt1;
         public TextView mTxt2;
         public TextView mTxt3;
+        public TextView mTxt4;
 
         public BookmarkViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -47,6 +45,7 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
             mTxt1 = itemView.findViewById(R.id.textView1);
             mTxt2 = itemView.findViewById(R.id.textView2);
             mTxt3 = itemView.findViewById(R.id.textView3);
+            mTxt4 = itemView.findViewById(R.id.textView4);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -99,6 +98,7 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
         holder.mTxt1.setText(currentItem.getmTxt1());
         holder.mTxt2.setText(dataPosition);
         holder.mTxt3.setText(currentItem.getmTxt3());
+        holder.mTxt4.setText(currentItem.getmTxt4());
     }
 
     @Override

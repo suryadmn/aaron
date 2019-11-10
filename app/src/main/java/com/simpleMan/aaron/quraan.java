@@ -31,6 +31,7 @@ public class quraan extends Fragment {
 
     private int mPager;
     private String strJuz;
+    private String strSurah;
 
     public quraan() {
         // Required empty public constructor
@@ -109,8 +110,15 @@ public class quraan extends Fragment {
             strJuz = "3";
         }
 
+        //Get string Txt surah
+        if (pager <= 0) {
+            strSurah = "Al-Faatiha";
+        }else if (pager <= 48){
+            strSurah = "Al-Baqara";
+        }
+
         //Insert data item
-        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page", mPager, "|    juz  "+strJuz));
+        mBookmarkList.add(position, new bookmarkItem(R.drawable.ic_bookmark_white_24dp, "Page", mPager, "|    juz  "+strJuz, "|   "+strSurah));
         mAdapter.notifyItemInserted(position);
     }
 
