@@ -96,35 +96,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-        //Limit spinner popup juz
-        try {
-            Field popup = Spinner.class.getDeclaredField("mPopup");
-            popup.setAccessible(true);
 
-            // Get private mPopup member variable and try cast to ListPopupWindow
-            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(spinnerJuz);
-
-            // Set popupWindow height to 800px
-            popupWindow.setHeight(800);
-        }
-        catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
-            // silently fail...
-        }
-
-        //Limit spinner popup surah
-        try {
-            Field popup = Spinner.class.getDeclaredField("mPopup");
-            popup.setAccessible(true);
-
-            // Get private mPopup member variable and try cast to ListPopupWindow
-            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(spinnerSurah);
-
-            // Set popupWindow height to 500px
-            popupWindow.setHeight(800);
-        }
-        catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
-            // silently fail...
-        }
 
         //Implements spinner juz to select Listener
         spinnerJuz.setOnItemSelectedListener(this);

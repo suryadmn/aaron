@@ -1,18 +1,47 @@
 package com.simpleMan.aaron;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.viewpager.widget.PagerAdapter;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TajwidSliderAdapter extends PagerAdapter {
     private Context context;
     private LayoutInflater layoutInflater;
+    private OnTajwidClickListener mTajwidListener;
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog alertDialog;
+    private ProgressDialog progressDialog;
+
+    private TextView tvArabtajwid, tvPenjelasanTajwid;
+
+
+    private int a, b;
 
     public TajwidSliderAdapter(Context context) {
         this.context = context;
@@ -37,16 +66,65 @@ public class TajwidSliderAdapter extends PagerAdapter {
         return view == (LinearLayout) object;
     }
 
+    public interface OnTajwidClickListener{
+        void onTajwid(int position);
+    }
+
+    public int getPosition(int position){
+        mTajwidListener.onTajwid(position);
+        return position;
+    }
+
+    public void setOnTawjidClickListener(OnTajwidClickListener listener){
+        mTajwidListener = listener;
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     @NonNull
     @Override
-    public Object instantiateItem(@NonNull ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.slide_tajwid_layout, container, false);
+
 
         ImageView slideImageView = view.findViewById(R.id.slideTajwidImages);
         slideImageView.setImageResource(slider_Images[position]);
         slideImageView.setRotationY(180);
         container.addView(view);
+
+        //Get coordinate
+        slideImageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                a = (int) event.getX();
+                b = (int) event.getY();
+
+                Log.i("Info Coordinate","X : "+a+" Y : "+b);
+                return false;
+            }
+        });
+
+        slideImageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public boolean onLongClick(View v) {
+                if (position == 0) {
+                    doCoordinate();
+                } else if (position == 1) {
+                    Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                } else if (position == 2){
+                    Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                } else if (position == 3) {
+                    Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                } else if (position == 4) {
+                    Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                }
+
+                //Get position image with Listener
+                getPosition(position);
+                return false;
+            }
+        });
 
         return view;
     }
@@ -55,4 +133,133 @@ public class TajwidSliderAdapter extends PagerAdapter {
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((LinearLayout)object);
     }
+
+    /**Function handle popup*/
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void showAlertDialog(int layout){
+        dialogBuilder = new AlertDialog.Builder(context);
+        View layoutView = layoutInflater.inflate(layout, null);
+        Button dialogButton = layoutView.findViewById(R.id.btnDialog);
+        dialogBuilder.setView(layoutView);
+        dialogBuilder.create();
+        alertDialog = dialogBuilder.create();
+        alertDialog.show();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        tvArabtajwid = layoutView.findViewById(R.id.arabTajwid);
+        tvPenjelasanTajwid = layoutView.findViewById(R.id.penjelasanTajwid);
+
+        //set progress dialog
+        progressDialog = new ProgressDialog(context);
+
+        progressDialog.setMessage("Memuat...");
+
+        //Show progress dialog
+        progressDialog.show();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Api.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        Api api = retrofit.create(Api.class);
+
+        Call<List<Model>> call = api.getModel();
+
+        call.enqueue(new Callback<List<Model>>() {
+            @Override
+            public void onResponse(Call<List<Model>> call, Response<List<Model>> response) {
+                progressDialog.dismiss();
+                List<Model> models = response.body();
+
+                tvArabtajwid.setText(models.get(0).getArabtajwid());
+                tvPenjelasanTajwid.setText(models.get(0).getPenjelasantajwid());
+            }
+
+            @Override
+            public void onFailure(Call<List<Model>> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(context, "Tidak dapat memuat konten", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+
+            }
+        });
+    }
+
+
+    /**Setup coordinate*/
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void doCoordinate(){
+        int X = a, Y = b;
+
+        //If user click at coordinate
+        if (X <= 551 && Y <= 275){
+            //Do nothing
+        } else if (X <= 200 && Y <= 350){
+            //Do nothing
+        } else if (X <= 551 && Y <= 350){
+            showAlertDialog(R.layout.popup_layout);
+            //Toast.makeText(context, "Al-Fatihaa | Ayat : 1", Toast.LENGTH_SHORT).show();
+
+        } else if (X <= 551 && Y <= 380){
+            //Do nothing
+        } else if (X <= 200 && Y <= 450){
+            //Do nothing
+        } else if (X <= 270 && Y <= 450){
+            Toast.makeText(context, "Al-Fatihaa | Ayat : 3", Toast.LENGTH_SHORT).show();
+        } else if (X <= 580 && Y <= 450){
+            Toast.makeText(context, "Al-Fatihaa | Ayat : 2", Toast.LENGTH_SHORT).show();
+
+        } else if (X <= 430 && Y <= 460) {
+            //Do nothing
+        } else if (X <= 200 && Y <= 530){
+            //Do nothing
+        } else if (X <= 429 && Y <= 530) {
+            Toast.makeText(context, "Al-Fatihaa | Ayat : 4", Toast.LENGTH_SHORT).show();
+        } else if (X <= 580 && Y <= 460) {
+            //Do nothing
+        } else if (X <= 445 && Y <= 530) {
+            //Do nothing
+        } else if (X <= 580 && Y <= 530) {
+            Toast.makeText(context, "Al-Fatihaa | Ayat : 3", Toast.LENGTH_SHORT).show();
+
+        } else if (X <= 200 && Y <= 560) {
+            //Do nothing
+        } else if (X <= 200 && Y <= 620) {
+            //Do nothing
+        } else if (X <= 580 && Y <= 620) {
+            Toast.makeText(context, "Al-Fatihaa | Ayat : 5", Toast.LENGTH_SHORT).show();
+
+        } else if (X <= 200  && Y <= 630) {
+            //Do nothing
+        } else if (X <= 200 && Y <= 710) {
+            //Do nothing
+        } else if (X <= 300 && Y <= 710) {
+            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+        } else if (X <= 580 && Y <= 710) {
+            Toast.makeText(context, "Al-Fatihaa | Ayat : 6", Toast.LENGTH_SHORT).show();
+
+        } else if (X <= 200 && Y <= 720) {
+            //Do nothing
+        } else if (X <= 200  && Y <= 780) {
+            //Do nothing
+        } else if (X <= 580  && Y <= 780) {
+            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+
+        } else if (X <= 275  && Y <= 790) {
+            //Do nothing
+        } else if (X <= 275  && Y <= 875) {
+            //Do nothing
+        } else if (X <= 500 && Y <= 875) {
+            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

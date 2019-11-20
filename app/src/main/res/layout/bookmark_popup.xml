@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:text="Bookmark this page?"
+        android:text="Bookmark halaman ini?"
         android:textColor="@android:color/black"/>
 
     <Button
@@ -21,7 +21,7 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SAVE"
+        android:text="SIMPAN"
         android:textColor="@color/white"
         android:background="@drawable/button_round"/>
 

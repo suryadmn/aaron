@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/popup_round">
 
     <TextView
+        android:id="@+id/arabTajwid"
         android:gravity="center"
-        android:text="This is popup_layout"
+        android:text="Arab Tajwid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
-        android:padding="50dp"/>
+        android:padding="10dp"/>
+
+    <TextView
+        android:id="@+id/penjelasanTajwid"
+        android:gravity="center"
+        android:text="Penjelasan Tajwid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:padding="10dp"/>
 
     <Button
         android:id="@+id/btnDialog"
