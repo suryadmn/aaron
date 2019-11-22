@@ -48,10 +48,9 @@
 
             <Spinner
                 android:id="@+id/juzSpinner"
-                android:entries="@array/juzArray"
                 android:paddingTop="10dp"
                 android:layout_width="90dp"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <Spinner
                 android:id="@+id/surahSpinner"

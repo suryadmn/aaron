@@ -12,8 +12,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -96,7 +98,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.juzArray, R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        spinnerJuz.setAdapter(adapter);
 
         //Implements spinner juz to select Listener
         spinnerJuz.setOnItemSelectedListener(this);
