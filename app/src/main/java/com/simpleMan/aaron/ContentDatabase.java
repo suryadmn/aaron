@@ -31,14 +31,14 @@ public abstract class ContentDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-            new PopulateDbAsynTask(instance).execute();
+            new PopulateDbAsyncTask(instance).execute();
         }
     };
 
-    private static class PopulateDbAsynTask extends AsyncTask<Void, Void, Void> {
+    private static class PopulateDbAsyncTask extends AsyncTask<Void, Void, Void> {
         private ContentDao contentDao;
 
-        private PopulateDbAsynTask(ContentDatabase db) {
+        private PopulateDbAsyncTask(ContentDatabase db) {
             contentDao = db.contentDao();
         }
 

@@ -20,8 +20,20 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -37,11 +49,13 @@ public class TajwidSliderAdapter extends PagerAdapter {
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog alertDialog;
     private ProgressDialog progressDialog;
-
-    private TextView tvArabtajwid, tvPenjelasanTajwid;
+    private ContentViewModel contentViewModel;
 
 
     private int a, b;
+    private String[] contentArab;
+    private String[] contentBahasa;
+    private int[] id;
 
     public TajwidSliderAdapter(Context context) {
         this.context = context;
@@ -85,7 +99,6 @@ public class TajwidSliderAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.slide_tajwid_layout, container, false);
-
 
         ImageView slideImageView = view.findViewById(R.id.slideTajwidImages);
         slideImageView.setImageResource(slider_Images[position]);
@@ -139,15 +152,12 @@ public class TajwidSliderAdapter extends PagerAdapter {
     private void showAlertDialog(int layout){
         dialogBuilder = new AlertDialog.Builder(context);
         View layoutView = layoutInflater.inflate(layout, null);
-        Button dialogButton = layoutView.findViewById(R.id.btnDialog);
+        Button dialogButton = layoutView.findViewById(R.id.btnLanjut);
         dialogBuilder.setView(layoutView);
         dialogBuilder.create();
         alertDialog = dialogBuilder.create();
         alertDialog.show();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        tvArabtajwid = layoutView.findViewById(R.id.arabTajwid);
-        tvPenjelasanTajwid = layoutView.findViewById(R.id.penjelasanTajwid);
 
         //set progress dialog
         progressDialog = new ProgressDialog(context);
@@ -157,7 +167,8 @@ public class TajwidSliderAdapter extends PagerAdapter {
         //Show progress dialog
         progressDialog.show();
 
-        Retrofit retrofit = new Retrofit.Builder()
+        //get data from mysql with Retorfit
+       Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Api.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -172,8 +183,19 @@ public class TajwidSliderAdapter extends PagerAdapter {
                 progressDialog.dismiss();
                 List<Model> models = response.body();
 
-                tvArabtajwid.setText(models.get(0).getArabtajwid());
-                tvPenjelasanTajwid.setText(models.get(0).getPenjelasantajwid());
+                id = new int[models.size()];
+                contentArab = new String[models.size()];
+                contentBahasa = new String[models.size()];
+
+                for (int i = 0; i < models.size(); i++){
+                    id[i] = models.get(i).getId();
+                    contentArab[i] = models.get(i).getArabtajwid();
+                    contentBahasa[i] = models.get(i).getPenjelasantajwid();
+                }
+
+                Log.d("","Info arab : "+ Arrays.toString(contentArab));
+                Log.d("", "Info Bahasa : "+ Arrays.toString(contentBahasa));
+
             }
 
             @Override
@@ -183,14 +205,65 @@ public class TajwidSliderAdapter extends PagerAdapter {
             }
         });
 
+        //Room database and Recycler view
+        RecyclerView recyclerView = layoutView.findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setHasFixedSize(true);
+
+        final ContentAdapter contentAdapter = new ContentAdapter();
+        recyclerView.setAdapter(contentAdapter);
+
+        contentViewModel = ViewModelProviders.of((FragmentActivity) context).get(ContentViewModel.class);
+        contentViewModel.getAllContent().observe((LifecycleOwner) context, new Observer<List<Content>>() {
+            @Override
+            public void onChanged(List<Content> contents) {
+                contentAdapter.setContent(contents);
+            }
+        });
 
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
+            public void onClick(final View view) {
+
+                Log.d("","Info contentViewModel"+contentViewModel.getAllContent().getValue());
+
+                //Do delete all contents first
+                //contentViewModel.deleteAllContents();
+
+                if (contentViewModel.getAllContent().getValue().isEmpty()){
+
+                    //Do get data from retrofit and send into local database
+                    for (int i=0; i < contentArab.length && i < contentBahasa.length; i++) {
+
+                        Content content = new Content(contentArab[i], contentBahasa[i]);
+                        contentViewModel.insert(content);
+
+                    }
+                    Toast.makeText(context, "Content diperbaharui", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(context, "Content sudah terkini", Toast.LENGTH_SHORT).show();
+                }
+
+                //alertDialog.dismiss();
 
             }
         });
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                contentViewModel.delete(contentAdapter.getContentAt(viewHolder.getAdapterPosition()));
+                Toast.makeText(context, "Content delete", Toast.LENGTH_SHORT).show();
+            }
+        }).attachToRecyclerView(recyclerView);
+
     }
 
 

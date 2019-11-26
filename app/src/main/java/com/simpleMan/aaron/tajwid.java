@@ -25,10 +25,6 @@ public class tajwid extends Fragment {
     private Button popup1;
     public ImageView slideImages;
     private ImageView mTajwid1;
-    private AlertDialog.Builder dialogBuilder;
-    private AlertDialog alertDialog;
-
-    private int a, b;
 
     public tajwid() {
         // Required empty public constructor
@@ -51,7 +47,7 @@ public class tajwid extends Fragment {
         slideImages = (ImageView) view.findViewById(R.id.slideTajwidImages);
 
         //Initialize obj from layout
-        popup1 = view.findViewById(R.id.btnDialog);
+        popup1 = view.findViewById(R.id.btnLanjut);
         mTajwid1 = view.findViewById(R.id.slideViewPager);
 
 
@@ -70,27 +66,5 @@ public class tajwid extends Fragment {
         });
 
         return view;
-    }
-
-    /**Function handle popup*/
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void showAlertDialog(int layout){
-        dialogBuilder = new AlertDialog.Builder(getContext());
-        View layoutView = getLayoutInflater().inflate(layout, null);
-        Button dialogButton = layoutView.findViewById(R.id.btnDialog);
-        dialogBuilder.setView(layoutView);
-        dialogBuilder.create();
-        alertDialog = dialogBuilder.create();
-        alertDialog.show();
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-
-
-        dialogButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //alertDialog.dismiss();
-            }
-        });
     }
 }

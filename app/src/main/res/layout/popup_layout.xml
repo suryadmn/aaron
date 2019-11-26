@@ -1,41 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/popup_round">
+    android:background="@drawable/popup_round"
+    android:gravity="center">
 
-    <TextView
-        android:id="@+id/arabTajwid"
-        android:gravity="center"
-        android:text="Arab Tajwid"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:padding="10dp"/>
-
-    <TextView
-        android:id="@+id/penjelasanTajwid"
-        android:gravity="center"
-        android:text="Penjelasan Tajwid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:padding="10dp"/>
+        android:layout_height="300dp"
+        tools:listitem="@layout/content_item" />
 
     <Button
-        android:id="@+id/btnDialog"
-        android:layout_width="match_parent"
+        android:id="@+id/btnLanjut"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_below="@+id/recycler_view"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="100dp"
         android:background="@drawable/button_round"
-        android:textColor="@android:color/white"
-        android:text="Continue"
-        android:textSize="18sp" />
+        android:text="Lanjutkan"
+        android:textColor="@color/white" />
 
-</LinearLayout>
+</RelativeLayout>
