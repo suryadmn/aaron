@@ -55,7 +55,6 @@ public class TajwidSliderAdapter extends PagerAdapter {
     private int a, b;
     private String[] contentArab;
     private String[] contentBahasa;
-    private int[] id;
 
     public TajwidSliderAdapter(Context context) {
         this.context = context;
@@ -63,11 +62,11 @@ public class TajwidSliderAdapter extends PagerAdapter {
 
     //Array images
     public int[] slider_Images = {
-      R.drawable.tajwid1,
-      R.drawable.tajwid2,
-      R.drawable.tajwid3,
-      R.drawable.tajwid4,
-      R.drawable.tajwid5
+            R.drawable.tajwid1,
+            R.drawable.tajwid2,
+            R.drawable.tajwid3,
+            R.drawable.tajwid4,
+            R.drawable.tajwid5
     };
 
     @Override
@@ -80,16 +79,16 @@ public class TajwidSliderAdapter extends PagerAdapter {
         return view == (LinearLayout) object;
     }
 
-    public interface OnTajwidClickListener{
+    public interface OnTajwidClickListener {
         void onTajwid(int position);
     }
 
-    public int getPosition(int position){
+    public int getPosition(int position) {
         mTajwidListener.onTajwid(position);
         return position;
     }
 
-    public void setOnTawjidClickListener(OnTajwidClickListener listener){
+    public void setOnTawjidClickListener(OnTajwidClickListener listener) {
         mTajwidListener = listener;
     }
 
@@ -112,7 +111,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
                 a = (int) event.getX();
                 b = (int) event.getY();
 
-                Log.i("Info Coordinate","X : "+a+" Y : "+b);
+                Log.i("Info Coordinate", "X : " + a + " Y : " + b);
                 return false;
             }
         });
@@ -125,7 +124,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
                     doCoordinate();
                 } else if (position == 1) {
                     Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
-                } else if (position == 2){
+                } else if (position == 2) {
                     Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
                 } else if (position == 3) {
                     Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
@@ -144,14 +143,16 @@ public class TajwidSliderAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        container.removeView((LinearLayout)object);
+        container.removeView((LinearLayout) object);
     }
 
-    /**Function handle popup*/
+    /**
+     * Function handle popup
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void showAlertDialog(int layout){
+    private void showAlertDialog(int layout) {
         dialogBuilder = new AlertDialog.Builder(context);
-        View layoutView = layoutInflater.inflate(layout, null);
+        final View layoutView = layoutInflater.inflate(layout, null);
         Button dialogButton = layoutView.findViewById(R.id.btnLanjut);
         dialogBuilder.setView(layoutView);
         dialogBuilder.create();
@@ -168,7 +169,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
         progressDialog.show();
 
         //get data from mysql with Retorfit
-       Retrofit retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Api.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -181,27 +182,49 @@ public class TajwidSliderAdapter extends PagerAdapter {
             @Override
             public void onResponse(Call<List<Model>> call, Response<List<Model>> response) {
                 progressDialog.dismiss();
+
+                //Delete all data from Room first
+                contentViewModel.deleteAllContents();
+
+                //Model API retorift2
                 List<Model> models = response.body();
 
-                id = new int[models.size()];
                 contentArab = new String[models.size()];
                 contentBahasa = new String[models.size()];
 
-                for (int i = 0; i < models.size(); i++){
-                    id[i] = models.get(i).getId();
+                for (int i = 0; i < models.size(); i++) {
                     contentArab[i] = models.get(i).getArabtajwid();
                     contentBahasa[i] = models.get(i).getPenjelasantajwid();
                 }
 
-                Log.d("","Info arab : "+ Arrays.toString(contentArab));
-                Log.d("", "Info Bahasa : "+ Arrays.toString(contentBahasa));
+                //add data to Room
+                Log.d("", "Info contentViewModel" + contentViewModel.getAllContent().getValue());
+                Log.d("", "Info content : ");
+
+                if (contentArab.length <= 5 || contentBahasa.length <= 5) {
+
+                    //Do get data from retrofit and send into local database
+                    for (int i = 0; i < contentArab.length && i < contentBahasa.length; i++) {
+
+                        Content content = new Content(contentArab[i], contentBahasa[i]);
+                        contentViewModel.insert(content);
+
+                    }
+                }
+
+                Log.d("", "Info arab : " + Arrays.toString(contentArab));
+                Log.d("", "Info Bahasa : " + Arrays.toString(contentBahasa));
 
             }
 
             @Override
             public void onFailure(Call<List<Model>> call, Throwable t) {
                 progressDialog.dismiss();
-                Toast.makeText(context, "Tidak dapat memuat konten", Toast.LENGTH_SHORT).show();
+
+                /*contentArab = new String[0];
+                contentBahasa = new String[0];*/
+
+                Toast.makeText(context, "Mode Offline", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -218,32 +241,18 @@ public class TajwidSliderAdapter extends PagerAdapter {
             @Override
             public void onChanged(List<Content> contents) {
                 contentAdapter.setContent(contents);
+
             }
         });
+
 
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
 
-                Log.d("","Info contentViewModel"+contentViewModel.getAllContent().getValue());
 
                 //Do delete all contents first
-                //contentViewModel.deleteAllContents();
-
-                if (contentViewModel.getAllContent().getValue().isEmpty()){
-
-                    //Do get data from retrofit and send into local database
-                    for (int i=0; i < contentArab.length && i < contentBahasa.length; i++) {
-
-                        Content content = new Content(contentArab[i], contentBahasa[i]);
-                        contentViewModel.insert(content);
-
-                    }
-                    Toast.makeText(context, "Content diperbaharui", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    Toast.makeText(context, "Content sudah terkini", Toast.LENGTH_SHORT).show();
-                }
+                /** contentViewModel.deleteAllContents(); */
 
                 //alertDialog.dismiss();
 
@@ -267,32 +276,34 @@ public class TajwidSliderAdapter extends PagerAdapter {
     }
 
 
-    /**Setup coordinate*/
+    /**
+     * Setup coordinate
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void doCoordinate(){
+    public void doCoordinate() {
         int X = a, Y = b;
 
         //If user click at coordinate
-        if (X <= 551 && Y <= 275){
+        if (X <= 551 && Y <= 275) {
             //Do nothing
-        } else if (X <= 200 && Y <= 350){
+        } else if (X <= 200 && Y <= 350) {
             //Do nothing
-        } else if (X <= 551 && Y <= 350){
+        } else if (X <= 551 && Y <= 350) {
             showAlertDialog(R.layout.popup_layout);
             //Toast.makeText(context, "Al-Fatihaa | Ayat : 1", Toast.LENGTH_SHORT).show();
 
-        } else if (X <= 551 && Y <= 380){
+        } else if (X <= 551 && Y <= 380) {
             //Do nothing
-        } else if (X <= 200 && Y <= 450){
+        } else if (X <= 200 && Y <= 450) {
             //Do nothing
-        } else if (X <= 270 && Y <= 450){
+        } else if (X <= 270 && Y <= 450) {
             Toast.makeText(context, "Al-Fatihaa | Ayat : 3", Toast.LENGTH_SHORT).show();
-        } else if (X <= 580 && Y <= 450){
+        } else if (X <= 580 && Y <= 450) {
             Toast.makeText(context, "Al-Fatihaa | Ayat : 2", Toast.LENGTH_SHORT).show();
 
         } else if (X <= 430 && Y <= 460) {
             //Do nothing
-        } else if (X <= 200 && Y <= 530){
+        } else if (X <= 200 && Y <= 530) {
             //Do nothing
         } else if (X <= 429 && Y <= 530) {
             Toast.makeText(context, "Al-Fatihaa | Ayat : 4", Toast.LENGTH_SHORT).show();
@@ -310,7 +321,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
         } else if (X <= 580 && Y <= 620) {
             Toast.makeText(context, "Al-Fatihaa | Ayat : 5", Toast.LENGTH_SHORT).show();
 
-        } else if (X <= 200  && Y <= 630) {
+        } else if (X <= 200 && Y <= 630) {
             //Do nothing
         } else if (X <= 200 && Y <= 710) {
             //Do nothing
@@ -321,14 +332,14 @@ public class TajwidSliderAdapter extends PagerAdapter {
 
         } else if (X <= 200 && Y <= 720) {
             //Do nothing
-        } else if (X <= 200  && Y <= 780) {
+        } else if (X <= 200 && Y <= 780) {
             //Do nothing
-        } else if (X <= 580  && Y <= 780) {
+        } else if (X <= 580 && Y <= 780) {
             Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
 
-        } else if (X <= 275  && Y <= 790) {
+        } else if (X <= 275 && Y <= 790) {
             //Do nothing
-        } else if (X <= 275  && Y <= 875) {
+        } else if (X <= 275 && Y <= 875) {
             //Do nothing
         } else if (X <= 500 && Y <= 875) {
             Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();

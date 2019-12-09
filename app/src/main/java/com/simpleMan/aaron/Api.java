@@ -9,7 +9,7 @@ public interface Api {
 
     String BASE_URL = "https://aaron-app.000webhostapp.com/";
 
-    @GET("load.php")
+    @GET("load")
     Call<List<Model>> getModel();
 
 }
