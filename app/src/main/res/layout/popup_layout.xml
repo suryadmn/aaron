@@ -13,18 +13,23 @@
         android:layout_height="300dp"
         tools:listitem="@layout/content_item" />
 
-    <Button
-        android:id="@+id/btnLanjut"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/recycler_view"
+    <ImageView
+        android:id="@+id/imgAudio"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/recycler_view"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="100dp"
-        android:background="@drawable/button_round"
-        android:text="Lanjutkan"
-        android:textColor="@color/white" />
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/ic_play_circle_filled" />
+
+
+    <SeekBar
+        android:id="@+id/seekBarAudio"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/imgAudio"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/imgAudio" />
 
 </RelativeLayout>

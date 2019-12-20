@@ -6,7 +6,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +55,12 @@ public class TajwidSliderAdapter extends PagerAdapter {
     private ProgressDialog progressDialog;
     private ContentViewModel contentViewModel;
 
+    //audio
+    ImageView imgAudio;
+    private SeekBar seekBar;
+    private MediaPlayer mediaPlayer;
+    private int currentTime;
+
 
     private int a, b;
     private String[] contentArab;
@@ -81,15 +91,6 @@ public class TajwidSliderAdapter extends PagerAdapter {
 
     public interface OnTajwidClickListener {
         void onTajwid(int position);
-    }
-
-    public int getPosition(int position) {
-        mTajwidListener.onTajwid(position);
-        return position;
-    }
-
-    public void setOnTawjidClickListener(OnTajwidClickListener listener) {
-        mTajwidListener = listener;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -132,8 +133,6 @@ public class TajwidSliderAdapter extends PagerAdapter {
                     Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
                 }
 
-                //Get position image with Listener
-                getPosition(position);
                 return false;
             }
         });
@@ -153,7 +152,6 @@ public class TajwidSliderAdapter extends PagerAdapter {
     private void showAlertDialog(int layout) {
         dialogBuilder = new AlertDialog.Builder(context);
         final View layoutView = layoutInflater.inflate(layout, null);
-        Button dialogButton = layoutView.findViewById(R.id.btnLanjut);
         dialogBuilder.setView(layoutView);
         dialogBuilder.create();
         alertDialog = dialogBuilder.create();
@@ -162,7 +160,6 @@ public class TajwidSliderAdapter extends PagerAdapter {
 
         //set progress dialog
         progressDialog = new ProgressDialog(context);
-
         progressDialog.setMessage("Memuat...");
 
         //Show progress dialog
@@ -221,9 +218,6 @@ public class TajwidSliderAdapter extends PagerAdapter {
             public void onFailure(Call<List<Model>> call, Throwable t) {
                 progressDialog.dismiss();
 
-                /*contentArab = new String[0];
-                contentBahasa = new String[0];*/
-
                 Toast.makeText(context, "Mode Offline", Toast.LENGTH_SHORT).show();
             }
         });
@@ -245,20 +239,79 @@ public class TajwidSliderAdapter extends PagerAdapter {
             }
         });
 
+        //---
+        //For audio
+        imgAudio = layoutView.findViewById(R.id.imgAudio);
+        mediaPlayer = MediaPlayer.create(context, R.raw.bismillah);
+        seekBar = layoutView.findViewById(R.id.seekBarAudio);
+        currentTime = mediaPlayer.getDuration();
+        seekBar.setMax(currentTime);
 
-        dialogButton.setOnClickListener(new View.OnClickListener() {
+        //Seekbar
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onClick(final View view) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser){
+                    mediaPlayer.seekTo(progress);
+                    seekBar.setProgress(progress);
+                }
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-                //Do delete all contents first
-                /** contentViewModel.deleteAllContents(); */
+            }
 
-                //alertDialog.dismiss();
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
 
+        //Thread
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mediaPlayer != null){
+                    try {
+                        Message msg = new Message();
+                        msg.what = mediaPlayer.getCurrentPosition();
+                        handler.sendMessage(msg);
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
+        //When play button clicked
+        imgAudio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imgAudio.setImageResource(R.drawable.ic_pause_circle_filled);
+
+                if (mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    imgAudio.setImageResource(R.drawable.ic_play_circle_filled);
+                }else{
+                    mediaPlayer.start();
+
+                }
+            }
+        });
+
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                imgAudio.setImageResource(R.drawable.ic_play_circle_filled);
+            }
+        });
+
+
+        //---
+
+        /* //Delete data from room with slider
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -271,10 +324,19 @@ public class TajwidSliderAdapter extends PagerAdapter {
                 contentViewModel.delete(contentAdapter.getContentAt(viewHolder.getAdapterPosition()));
                 Toast.makeText(context, "Content delete", Toast.LENGTH_SHORT).show();
             }
-        }).attachToRecyclerView(recyclerView);
+        }).attachToRecyclerView(recyclerView);*/
 
     }
 
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            int currentPosition = msg.what;
+            //update seekbar
+            seekBar.setProgress(currentPosition);
+        }
+    };
 
     /**
      * Setup coordinate

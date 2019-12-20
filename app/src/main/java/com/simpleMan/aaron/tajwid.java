@@ -47,7 +47,6 @@ public class tajwid extends Fragment {
         slideImages = (ImageView) view.findViewById(R.id.slideTajwidImages);
 
         //Initialize obj from layout
-        popup1 = view.findViewById(R.id.btnLanjut);
         mTajwid1 = view.findViewById(R.id.slideViewPager);
 
 
@@ -55,15 +54,6 @@ public class tajwid extends Fragment {
         tajwidSliderAdapter = new TajwidSliderAdapter(getContext());
         viewPager.setAdapter(tajwidSliderAdapter);
         viewPager.setRotationY(180);
-
-        //get position pager from adapter
-        tajwidSliderAdapter.setOnTawjidClickListener(new TajwidSliderAdapter.OnTajwidClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onTajwid(int position) {
-
-            }
-        });
 
         return view;
     }
