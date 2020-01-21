@@ -34,7 +34,7 @@ public class bookmark extends Fragment {
     private RecyclerView mRecyclerView;
     private bookmarkAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<bookmarkItem> mBookmarkList;
+    private ArrayList<bookmarkItem> mBookmarkList = null;
     private Bundle bundle;
 
     public bookmark() {
@@ -124,8 +124,8 @@ public class bookmark extends Fragment {
         Type type = new TypeToken<ArrayList<bookmarkItem>>() {}.getType();
         mBookmarkList = gson.fromJson(json, type);
 
-        //Check is data array from bookmarkList empty
-        if (mBookmarkList.isEmpty()){
+        //Check data array from bookmarkList are empty or null
+        if (mBookmarkList == null || mBookmarkList.isEmpty()){
             showAlertDialog(R.layout.no_bookmark_popup);
         }
 

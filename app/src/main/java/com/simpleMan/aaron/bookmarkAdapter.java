@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -103,7 +104,7 @@ public class bookmarkAdapter extends RecyclerView.Adapter<bookmarkAdapter.Bookma
 
     @Override
     public int getItemCount() {
-        return mBookmarkList.size();
+        return null!=mBookmarkList?mBookmarkList.size():0;
     }
 
     public String saveData(View view){

@@ -272,8 +272,10 @@ public class TajwidSliderAdapter extends PagerAdapter {
                 //Delete all data from Room first
                 contentViewModel.deleteAllContents();
 
-                //Then insert
-                if (condition == 1){
+                //Check array null or not
+                if (contentViewModel.getAllContent().getValue() == null || contentViewModel.getAllContent().getValue().isEmpty()) {
+                    Toast.makeText(context, "Hidupkan data untuk download konten tajwid", Toast.LENGTH_LONG).show();
+                }else if (condition == 1){
                     for (int i = 0; i < 4; i++){
                         Content content = new Content(contentArab[i], contentBahasa[i]);
                         contentViewModel.insert(content);
