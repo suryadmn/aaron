@@ -3,13 +3,18 @@ package com.simpleMan.aaron;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +30,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -48,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        permission_check();
         setContentView(R.layout.activity_main);
 
         //initialize
@@ -121,10 +128,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (toggle.onOptionsItemSelected(item)) {
 
-            //Hide virtual keyboard
-            //InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            //inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -145,6 +148,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             case R.id.tajwid:
                 fragmentClass = tajwid.class;
+                break;
+
+            case R.id.teori:
+                fragmentClass = Theory.class;
                 break;
 
             case R.id.help:
@@ -267,6 +274,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Do nothing
     }
 
+    /**
+     * Call Al-Qur'an Fragment
+     */
     public void callFragmentQuraan() {
         fragmentQuraan = new quraan();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -274,5 +284,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         drawerLayout.closeDrawers();
         //save data to bundle
         fragmentQuraan.setArguments(bundle);
+    }
+
+    /**
+     * Check EXTERNAL_STORAGE Permission
+     */
+    public void permission_check(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+         switch (requestCode){
+             case 1:
+                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                     File create_dir =  new File(Environment.getExternalStorageDirectory()+"/Aaron/Data/Audio");
+                     Toast.makeText(this, "Membuat folder baru", Toast.LENGTH_LONG).show();
+                     create_dir.mkdirs();
+
+                 }else {
+                     finish();
+                 }
+         }
     }
 }

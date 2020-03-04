@@ -44,7 +44,6 @@ public abstract class ContentDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            contentDao.insert(new Content("Content arab", "Content bahasa"));
             return null;
         }
     }

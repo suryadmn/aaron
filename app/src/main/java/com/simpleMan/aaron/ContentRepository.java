@@ -48,6 +48,7 @@ public class ContentRepository {
         }
     }
 
+
     /**-----=====For delete item content=====-----*/
     private static class DeleteContentAsynTask extends AsyncTask<Content, Void, Void> {
         private ContentDao contentDao;

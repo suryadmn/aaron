@@ -163,7 +163,7 @@ public class SliderAdapter extends PagerAdapter {
             public void onClick(View view) {
                 alertDialog.dismiss();
                 mListener.onPager(position);
-                Toast.makeText(context, "Bookmark saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Bookmark tersimpan", Toast.LENGTH_SHORT).show();
             }
         });
     }

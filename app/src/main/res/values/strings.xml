@@ -42,4 +42,25 @@
         <item>At-Tawba</item>
         <item>Yunus</item>
     </string-array>
+
+    //Menu for Teori
+
+    //Menu for Bantuan
+    //header
+    <string name="header1">Menu Al-Quran</string>
+    <string name="header2">Menu Bookmark</string>
+    <string name="header3">Menu Tajwid</string>
+    <string name="header4">Menu Teori</string>
+    <string name="header5">Menu Bantuan</string>
+    <string name="header6">Menu Tentang</string>
+    //paraf
+    <string name="paraf1">Merupakan menu yang berisikan ayat Al-Quran secara lengkap pada umumnya.</string>
+    <string name="paraf2">Merupakan menu yang berisikan riwayat terakhir anda membaca Al-Quran, ini dimaksudkan agar pengguna lebih mudah menyambung kembali bacaan Al-Quran yang telah dibaca sebelumnya.</string>
+    <string name="paraf3">Merupakan menu utama yang ditawarkan aplikasi, disini pengguna dapat dengan mudah mengetahui semua hukum-hukum tajwid dengan satu ketukan pada layar, dilengkapi dengan penjelasan serta audio pada tiap ayatnya.</string>
+    <string name="paraf4">Merupakan menu yang berisikan teori huruf Hijaiyah, teori Harakat, teori permulaan Tajwid, teori lanjutan Tajwid, dan latihan.</string>
+    <string name="paraf5">Merupakan menu yang berisikan cara penggunaan aplikasi.</string>
+    <string name="paraf6">Merupakan menu yang berisikan info tentang, pengembang, dan versi dari aplikasi.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

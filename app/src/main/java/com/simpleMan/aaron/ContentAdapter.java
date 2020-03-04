@@ -1,5 +1,6 @@
 package com.simpleMan.aaron;
 
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,16 +27,8 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
     @Override
     public void onBindViewHolder(@NonNull ContentHolder holder, int position) {
         Content currentContent = contents.get(position);
-
-       /* if (position < 4){
-            holder.relativeLayoutHolder.setVisibility(View.VISIBLE);*/
-
-            holder.txtArab.setText(currentContent.getArab());
-            holder.txtBahasa.setText(currentContent.getPenjelasan());
-
-        /*}else {
-            holder.relativeLayoutHolder.setVisibility(View.GONE);
-        }*/
+        holder.txtArab.setText(currentContent.getArab());
+        holder.txtBahasa.setText(currentContent.getPenjelasan());
     }
 
     @Override
@@ -43,13 +36,9 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
         return contents.size();
     }
 
-    public void setContent(List<Content> contents) {
+    public void setContents(List<Content> contents){
         this.contents = contents;
         notifyDataSetChanged();
-    }
-
-    public Content getContentAt(int position) {
-        return contents.get(position);
     }
 
     class ContentHolder extends RecyclerView.ViewHolder {

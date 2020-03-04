@@ -95,16 +95,13 @@ public class bookmark extends Fragment {
 
                 //Send data to bundle quraan
                 bundle = new Bundle();
-                bundle.putInt("data",mPosition);
+                bundle.putInt("data", mPosition);
                 quraan fragmentQuraan = new quraan();
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.flContent, fragmentQuraan).commit();
                 fragmentQuraan.setArguments(bundle);
                 FragmentActivity actionBar = getActivity();
                 actionBar.setTitle("Al-Qur'anul Karim");
-
-                //Info
-                Log.i("Position mBookmark",""+mPosition);
             }
 
             @Override

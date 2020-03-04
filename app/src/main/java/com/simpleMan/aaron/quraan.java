@@ -71,7 +71,6 @@ public class quraan extends Fragment {
         }else{
             int intData = getArguments().getInt("data");
             viewPager.setCurrentItem(intData);
-            Log.i("Position mQuraan",""+intData);
         }
 
         sliderAdapter.setOnPagerClickListener(new SliderAdapter.OnPagerClickListener() {
@@ -82,11 +81,6 @@ public class quraan extends Fragment {
 
                 //Save all data to sharedPref
                 saveData();
-
-                //info
-                String dataInfo = saveData();
-                Log.i("Info data ArrayList",""+dataInfo);
-                Log.i("info pager",""+position);
             }
         });
 
