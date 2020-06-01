@@ -23,6 +23,10 @@ public class ContentViewModel extends AndroidViewModel {
         repository.insert(content);
     }
 
+    public void update(Content content){
+        repository.update(content);
+    }
+
     public void delete(Content content) {
         repository.delete(content);
     }

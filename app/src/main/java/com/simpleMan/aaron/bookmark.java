@@ -132,7 +132,6 @@ public class bookmark extends Fragment {
     /**Function handle popup*/
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void showAlertDialog(int layout){
-
         LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
         View layoutView = layoutInflater.inflate(layout, null);
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(layoutView.getContext());

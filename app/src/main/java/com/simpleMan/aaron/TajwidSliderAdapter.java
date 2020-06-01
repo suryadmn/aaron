@@ -45,6 +45,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -154,8 +155,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
         float metrics = view.getResources().getDisplayMetrics().density;
         if (metrics >= 4.0){
             Toast.makeText(context, "xxxhdpi", Toast.LENGTH_SHORT).show();
-        }else
-        if (metrics >= 3.0){
+        }else if (metrics >= 3.0){
             slideImageView.setOnLongClickListener(new View.OnLongClickListener() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
@@ -192,36 +192,37 @@ public class TajwidSliderAdapter extends PagerAdapter {
                 slideImageView.requestLayout();
             }
 
-            //When user OnLongPress on images
+            //When user OnLongPress on mapping
             //then do...
             slideImageView.setOnLongClickListener(new View.OnLongClickListener() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public boolean onLongClick(View v) {
-
+                    //when resolution 1080+
                     if (width >= 1080){
                         if (position == 0) {
                             alFatihahXhdpiVer2();
                         } else if (position == 1) {
-                            Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                            alBaqarahPage2XhdpiVer2();
                         } else if (position == 2) {
-                            Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                            alBaqarahPage3XhdpiVer2();
                         } else if (position == 3) {
-                            Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                            alBaqarahPage4XhdpiVer2();
                         } else if (position == 4) {
-                            Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                            alBaqarahPage5XhdpiVer2();
                         }
+                        //when resolution 720+
                     }else if ( width >= 720){
                         if (position == 0) {
                             alFatihahXhdpi();
                         } else if (position == 1) {
-                            Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                            alBaqarahPage2Xhdpi();
                         } else if (position == 2) {
-                            Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                            alBaqarahPage3Xhdpi();
                         } else if (position == 3) {
-                            Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                            alBaqarahPage4Xhdpi();
                         } else if (position == 4) {
-                            Toast.makeText(context, "Content not available yet ", Toast.LENGTH_LONG).show();
+                            alBaqarahPage5Xhdpi();
                         }
                     }
                     return false;
@@ -281,33 +282,147 @@ public class TajwidSliderAdapter extends PagerAdapter {
             public void onResponse(Call<List<Model>> call, Response<List<Model>> response) {
                 progressDialog.dismiss();
 
-                //Model API retorift2
-                List<Model> models = response.body();
-                id = new int[models.size()];
-                contentArab = new String[models.size()];
-                contentBahasa = new String[models.size()];
+                try {
 
-                for (int i = 0; i < models.size(); i++) {
-                    id[i] = models.get(i).getId();
-                    contentArab[i] = models.get(i).getArabtajwid();
-                    contentBahasa[i] = models.get(i).getPenjelasantajwid();
-                }
+                    //Model API retorift2
+                    List<Model> models = response.body();
+                    id = new int[models.size()];
+                    contentArab = new String[models.size()];
+                    contentBahasa = new String[models.size()];
 
-                /**Add all data to Room*/
-                //First, check Room database not empty ...
-                if (contentViewModel.getAllContent().getValue() != null || contentViewModel.getAllContent().getValue().isEmpty()){
-                    for (int i = 0; i < models.size(); i++){
-                        Content content = new Content(contentArab[i], contentBahasa[i]);
-                        //If duplicate content, then remove
-                        if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
-                        //else insert
-                        contentViewModel.insert(content);
+                    for (int i = 0; i < models.size(); i++) {
+                        id[i] = models.get(i).getId();
+                        contentArab[i] = models.get(i).getArabtajwid();
+                        contentBahasa[i] = models.get(i).getPenjelasantajwid();
                     }
-                }
 
-                //Info
-                Log.d("", "Info arab : " + Arrays.toString(contentArab));
-                Log.d("", "Info Bahasa : " + Arrays.toString(contentBahasa));
+                    /**Add all data to Room*/
+                    //Content content = new Content("", "");
+
+                    //First, check Room database is not empty ...
+                    if (contentViewModel.getAllContent().getValue() != null || contentViewModel.getAllContent().getValue().isEmpty()){
+                        //Create dummy data to database
+                        for (int i = 0; i < 255; i++){
+                            Content content = new Content("", "");
+
+                            //If duplicate content, remove
+                            if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                //then insert
+                                contentViewModel.insert(content);
+                        }
+
+                        if (condition == 1){
+                            for (int i = 0; i < 4; i++){
+
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }else if (condition == 2){
+                            for (int i = 4; i < 7; i++){
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }else if (condition == 3){
+                            for (int i = 7; i < 11; i++){
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }else if (condition == 4){
+                            for (int i = 11; i < 13; i++){
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }else if (condition == 5){
+                            for (int i = 13; i < 14; i++){
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }else if (condition == 6){
+                            for (int i = 14; i < 17; i++){
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }else if (condition == 7){
+                            for (int i = 17; i < 21; i++){
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }else if (condition == 8){
+                            for (int i = 0; i < 4; i++){
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }else if (condition == 9){
+                            for (int i = 21; i < 22; i++){
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }else if (condition == 10){
+                            for (int i = 22; i < 25; i++){
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }else if (condition == 11){
+                            for (int i = 25; i < 29; i++){
+                                Content content = new Content(contentArab[i], contentBahasa[i]);
+                                content.setId(i+1);
+                                //If duplicate content, remove
+                                if (contentViewModel.getAllContent().getValue().indexOf(content) == -1)
+                                    //then insert
+                                    contentViewModel.update(content);
+                            }
+                        }
+                    }
+
+                    //Info
+                    Log.d("", "Info id : " + Arrays.toString(id));
+                    Log.d("", "Info arab : " + Arrays.toString(contentArab));
+                    Log.d("", "Info Bahasa : " + Arrays.toString(contentBahasa));
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(context, "Kesalahan, Silahkan coba lagi", Toast.LENGTH_SHORT).show();
+                }
 
             }
 
@@ -316,7 +431,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
                 //Dismiss loading bar
                 progressDialog.dismiss();
 
-                Toast.makeText(context, "Mode Offline", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Kesalahan pada jaringan", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -341,6 +456,24 @@ public class TajwidSliderAdapter extends PagerAdapter {
                             contentAdapter.setContents(contents.subList(0, 4));
                         }else if (condition == 2){
                             contentAdapter.setContents(contents.subList(4, 7));
+                        }else if (condition == 3){
+                            contentAdapter.setContents(contents.subList(7, 11));
+                        }else if (condition == 4){
+                            contentAdapter.setContents(contents.subList(11, 13));
+                        }else if (condition == 5){
+                            contentAdapter.setContents(contents.subList(13, 14));
+                        }else if (condition == 6){
+                            contentAdapter.setContents(contents.subList(14, 17));
+                        }else if (condition == 7){
+                            contentAdapter.setContents(contents.subList(17, 21));
+                        }else if (condition == 8){
+                            contentAdapter.setContents(contents.subList(0, 4));
+                        }else if (condition == 9){
+                            contentAdapter.setContents(contents.subList(21, 22));
+                        }else if (condition == 10){
+                            contentAdapter.setContents(contents.subList(22, 25));
+                        }else if (condition == 11){
+                            contentAdapter.setContents(contents.subList(25, 29));
                         }
                     }catch (IndexOutOfBoundsException e){
                        e.printStackTrace();
@@ -358,6 +491,16 @@ public class TajwidSliderAdapter extends PagerAdapter {
                 audioPath = Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(0);
             }else if (condition == 2) {
                 audioPath = Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(1);
+            }else if (condition == 3) {
+                audioPath = Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(2);
+            }else if (condition == 4) {
+                audioPath = Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(3);
+            }else if (condition == 5) {
+                audioPath = Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(4);
+            }else if (condition == 6) {
+                audioPath = Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(5);
+            }else if (condition == 7) {
+                audioPath = Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(6);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -370,6 +513,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
             mediaPlayer.prepare();
         } catch (IOException | IllegalArgumentException | NullPointerException e) {
             e.printStackTrace();
+            Toast.makeText(context, "Kesalahan, Audio tidak dapat ditemukan", Toast.LENGTH_SHORT).show();
         }
 
         imgAudio = layoutView.findViewById(R.id.imgAudio);
@@ -422,7 +566,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
                 //Download all String json
                 AudioJson();
 
-                //Check, is  there  data on method getArrayList
+                //Check, is there data in method getArrayList
                 //If exist, do this
                 try{
                     if (condition == 1){
@@ -436,6 +580,51 @@ public class TajwidSliderAdapter extends PagerAdapter {
                         }
                     }else if (condition == 2){
                         File file = new File(Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(1));
+                        //if file exists on storage
+                        if (!file.exists()){
+                            //Cal method AudioJsonArray
+                            DownloadAudio(condition);
+                        }else {
+                            Log.i("File audio","Exists");
+                        }
+                    }else if (condition == 3){
+                        File file = new File(Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(2));
+                        //if file exists on storage
+                        if (!file.exists()){
+                            //Cal method AudioJsonArray
+                            DownloadAudio(condition);
+                        }else {
+                            Log.i("File audio","Exists");
+                        }
+                    }else if (condition == 4){
+                        File file = new File(Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(3));
+                        //if file exists on storage
+                        if (!file.exists()){
+                            //Cal method AudioJsonArray
+                            DownloadAudio(condition);
+                        }else {
+                            Log.i("File audio","Exists");
+                        }
+                    }else if (condition == 5){
+                        File file = new File(Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(4));
+                        //if file exists on storage
+                        if (!file.exists()){
+                            //Cal method AudioJsonArray
+                            DownloadAudio(condition);
+                        }else {
+                            Log.i("File audio","Exists");
+                        }
+                    }else if (condition == 6){
+                        File file = new File(Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(5));
+                        //if file exists on storage
+                        if (!file.exists()){
+                            //Cal method AudioJsonArray
+                            DownloadAudio(condition);
+                        }else {
+                            Log.i("File audio","Exists");
+                        }
+                    }else if (condition == 7){
+                        File file = new File(Environment.getExternalStorageDirectory().getPath()+"/Aaron/Data/Audio/"+getArrayList("Json audio file").get(6));
                         //if file exists on storage
                         if (!file.exists()){
                             //Cal method AudioJsonArray
@@ -493,7 +682,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
             @Override
             public void run() {
                 OkHttpClient okHttpClient = new OkHttpClient();
-                Request request = new Request.Builder().url("https://aaron-app.000webhostapp.com/loadAudio?list_audio").build();
+                Request request = new Request.Builder().url("https://aaron-qurantajwid.000webhostapp.com/loadAudio").build();
 
                 okhttp3.Response responses = null;
                 try {
@@ -503,6 +692,8 @@ public class TajwidSliderAdapter extends PagerAdapter {
                     for (int i = 0; i < array.length(); i++){
 
                         String file_name = array.getString(i);
+                        //JSONObject obj = array.getJSONObject(i);
+                        //String file_name = obj.getString("file_name");
 
                         //If file name already exist, then remove item
                         if (audio_files.indexOf(file_name) == -1)
@@ -510,7 +701,12 @@ public class TajwidSliderAdapter extends PagerAdapter {
                             audio_files.add(file_name);
 
                         //Save file name json to shared preferences
-                        saveArrayList(audio_files, "Json audio file");
+                        try {
+                            saveArrayList(audio_files, "Json audio file");
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                         Log.d("info for ", "Json audio file : "+ getArrayList("Json audio file") );
                     }
 
@@ -521,7 +717,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
                         }
                     });
 
-                } catch (IOException | JSONException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -545,13 +741,23 @@ public class TajwidSliderAdapter extends PagerAdapter {
             selected_audio = audio_files.get(0);
         }else if (condition == 2){
             selected_audio = audio_files.get(1);
+        }else if (condition == 3){
+            selected_audio = audio_files.get(2);
+        }else if (condition == 4){
+            selected_audio = audio_files.get(3);
+        }else if (condition == 5){
+            selected_audio = audio_files.get(4);
+        }else if (condition == 6){
+            selected_audio = audio_files.get(5);
+        }else if (condition == 7){
+            selected_audio = audio_files.get(6);
         }
 
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 OkHttpClient client  = new OkHttpClient();
-                Request request = new Request.Builder().url("https://aaron-app.000webhostapp.com/assets/audio/"+selected_audio).build();
+                Request request = new Request.Builder().url("https://aaron-qurantajwid.000webhostapp.com/assets/audio/"+selected_audio).build();
 
                 okhttp3.Response response = null;
                 try{
@@ -619,7 +825,9 @@ public class TajwidSliderAdapter extends PagerAdapter {
 
     /**
      * Setup coordinate
-     */
+     *
+     *Density 2.0 (XHDPI)*/
+        //For 720p+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void alFatihahXhdpi() {
         //Get coordinate X and Y
@@ -637,7 +845,7 @@ public class TajwidSliderAdapter extends PagerAdapter {
         } else if (X <= 200 && Y <= 450) {
             //Do nothing
         } else if (X <= 270 && Y <= 450) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 3", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 3);
         } else if (X <= 580 && Y <= 450) {
             showAlertDialog(R.layout.popup_layout, 2);
         } else if (X <= 430 && Y <= 460) {
@@ -645,46 +853,232 @@ public class TajwidSliderAdapter extends PagerAdapter {
         } else if (X <= 200 && Y <= 530) {
             //Do nothing
         } else if (X <= 429 && Y <= 530) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 4", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 4);
         } else if (X <= 580 && Y <= 460) {
             //Do nothing
         } else if (X <= 445 && Y <= 530) {
             //Do nothing
         } else if (X <= 580 && Y <= 530) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 3", Toast.LENGTH_SHORT).show();
-
+            showAlertDialog(R.layout.popup_layout, 3);
         } else if (X <= 200 && Y <= 560) {
             //Do nothing
         } else if (X <= 200 && Y <= 620) {
             //Do nothing
         } else if (X <= 580 && Y <= 620) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 5", Toast.LENGTH_SHORT).show();
-
+            showAlertDialog(R.layout.popup_layout, 5);
         } else if (X <= 200 && Y <= 630) {
             //Do nothing
         } else if (X <= 200 && Y <= 710) {
             //Do nothing
         } else if (X <= 300 && Y <= 710) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 7);
         } else if (X <= 580 && Y <= 710) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 6", Toast.LENGTH_SHORT).show();
-
+            showAlertDialog(R.layout.popup_layout, 6);
         } else if (X <= 200 && Y <= 720) {
             //Do nothing
         } else if (X <= 200 && Y <= 780) {
             //Do nothing
         } else if (X <= 580 && Y <= 780) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
-
+            showAlertDialog(R.layout.popup_layout, 7);
         } else if (X <= 275 && Y <= 790) {
             //Do nothing
         } else if (X <= 275 && Y <= 875) {
             //Do nothing
         } else if (X <= 500 && Y <= 875) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 7);
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void alBaqarahPage2Xhdpi(){
+        int X = a, Y = b;
+
+        //If user click at coordinate
+        if (X <= 170 && Y <= 1105){
+            //Do nothing
+        }else if (X <= 700 && Y <= 280){
+            //Do nothing
+        }else if (X <= 575 && Y <= 355 ){
+            showAlertDialog(R.layout.popup_layout, 8);
+        }else if (X <= 480 && Y <= 450){
+            showAlertDialog(R.layout.popup_layout, 10);
+        }else if (X <= 575 && Y <= 450){
+            showAlertDialog(R.layout.popup_layout, 9);
+        }else if (X <= 455 && Y <= 520){
+            showAlertDialog(R.layout.popup_layout, 11);
+        }else if (X <= 575 && Y <= 520){
+            showAlertDialog(R.layout.popup_layout, 10);
+        }else if (X <= 575 && Y <= 600){
+            showAlertDialog(R.layout.popup_layout, 11);//--
+        }else if (X <= 575 && Y <= 700){
+            showAlertDialog(R.layout.popup_layout, 4);
+        }else if (X <= 290 && Y <= 775){
+            showAlertDialog(R.layout.popup_layout, 5);
+        }else if (X <= 575 && Y <= 775){
+            showAlertDialog(R.layout.popup_layout, 4);
+        }else if (X <= 575 && Y <= 870){
+            showAlertDialog(R.layout.popup_layout, 5);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void alBaqarahPage3Xhdpi(){
+        int X = a, Y = b;
+
+        if (X <= 700 && Y <= 35){
+            //Do nothing
+        }else if (X <= 45 && Y <= 1090){
+            //Do nothing
+        }else if (X <= 690 && Y <= 105){
+            showAlertDialog(R.layout.popup_layout, 6);
+        }else if (X <= 520 && Y <= 180){
+            showAlertDialog(R.layout.popup_layout, 7);
+        }else if (X <= 690 && Y <= 180){
+            showAlertDialog(R.layout.popup_layout, 6);
+        }else if (X <= 200 && Y <= 240){
+            showAlertDialog(R.layout.popup_layout, 8);
+        }else if (X <= 690 && Y <= 240){
+            showAlertDialog(R.layout.popup_layout, 7);
+        }else if (X <= 690 && Y <= 318){
+            showAlertDialog(R.layout.popup_layout, 8);
+        }else if (X <= 690 && Y <= 375){
+            showAlertDialog(R.layout.popup_layout, 9);
+        }else if (X <= 500 && Y <= 455){
+            showAlertDialog(R.layout.popup_layout, 10);
+        }else if (X <= 690 && Y <= 455){
+            showAlertDialog(R.layout.popup_layout, 9);
+        }else if (X <= 225 && Y <= 535){
+            showAlertDialog(R.layout.popup_layout, 11);
+        }else if (X <= 690 && Y <= 535){
+            showAlertDialog(R.layout.popup_layout, 10);
+        }else if (X <= 690 && Y <= 580){
+            showAlertDialog(R.layout.popup_layout, 11);
+        }else if (X <= 175 && Y <= 660){
+            showAlertDialog(R.layout.popup_layout, 13);
+        }else if (X <= 690 && Y <= 660){
+            showAlertDialog(R.layout.popup_layout, 12);
+        }else if (X <= 690 && Y <= 710){
+            showAlertDialog(R.layout.popup_layout, 13);
+        }else if (X <= 200 && Y <= 790){
+            showAlertDialog(R.layout.popup_layout, 14);
+        }else if (X <= 690 && Y <= 790){
+            showAlertDialog(R.layout.popup_layout, 13);
+        }else if (X <= 690 &&  Y <= 850){
+            showAlertDialog(R.layout.popup_layout, 14);
+        }else if (X <= 335 && Y <= 920){
+            showAlertDialog(R.layout.popup_layout, 15);
+        }else if (X <= 690 && Y <= 920){
+            showAlertDialog(R.layout.popup_layout, 14);
+        }else if (X <= 410 && Y <= 980){
+            showAlertDialog(R.layout.popup_layout, 16);
+        }else if (X <= 690 && Y <= 980){
+            showAlertDialog(R.layout.popup_layout, 15);
+        }else if (X <= 690 && Y <= 1070){
+            showAlertDialog(R.layout.popup_layout, 16);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void alBaqarahPage4Xhdpi(){
+        int X = a, Y = b;
+
+        if(X <= 40 && Y <= 1060){
+            //Do nothing
+        }else if (X <= 690 && Y <= 30){
+            //Do nothing
+        }else if (X <= 690 && Y <= 110){
+            showAlertDialog(R.layout.popup_layout, 17);
+        }else if (X <= 110 && Y <= 180){
+            showAlertDialog(R.layout.popup_layout, 18);
+        }else if (X <= 690 && Y <= 190){
+            showAlertDialog(R.layout.popup_layout, 17);
+        }else if (X <= 350 && Y <= 240){
+            showAlertDialog(R.layout.popup_layout, 19);
+        }else if (X <= 690 && Y <= 240){
+            showAlertDialog(R.layout.popup_layout, 18);
+        }else if (X <= 690 && Y <= 300){
+            showAlertDialog(R.layout.popup_layout, 19);
+        }else if (X <= 250 && Y <= 370){
+            showAlertDialog(R.layout.popup_layout, 20);
+        }else if (X <= 690 && Y <= 375){
+            showAlertDialog(R.layout.popup_layout, 19);
+        }else if (X <= 690 && Y <= 450){
+            showAlertDialog(R.layout.popup_layout, 20);
+        }else if (X <= 690 && Y <= 525){
+            showAlertDialog(R.layout.popup_layout, 20);
+        }else if (X <= 510 && Y <= 575){
+            showAlertDialog(R.layout.popup_layout, 21);
+        }else if (X <= 690 && Y <= 575){
+            showAlertDialog(R.layout.popup_layout, 20);
+        }else if (X <= 250 && Y <= 640){
+            showAlertDialog(R.layout.popup_layout, 22);
+        }else if (X <= 690 && Y <= 640){
+            showAlertDialog(R.layout.popup_layout, 21);
+        }else if (X <= 690 && Y <= 720){
+            showAlertDialog(R.layout.popup_layout, 22);
+        }else if (X <= 690 && Y <= 780){
+            showAlertDialog(R.layout.popup_layout, 22);
+        }else if (X <= 500 && Y <= 860){
+            showAlertDialog(R.layout.popup_layout, 23);
+        }else if (X <= 690 && Y <= 860){
+            showAlertDialog(R.layout.popup_layout, 22);
+        }else if (X <= 690 && Y <= 920){
+            showAlertDialog(R.layout.popup_layout, 23);
+        }else if (X <= 440 && Y <= 980){
+            showAlertDialog(R.layout.popup_layout, 24);
+        }else if (X <= 690 && Y <= 980){
+            showAlertDialog(R.layout.popup_layout, 23);
+        }else if (X <= 690 && Y <= 1055){
+            showAlertDialog(R.layout.popup_layout, 24);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void alBaqarahPage5Xhdpi(){
+        int X = a, Y = b;
+
+        if (X <= 40 && Y <= 1060){
+            //Do nothing
+        }else if (X <= 690 && Y <= 30){
+            //Do nothing
+        }else if (X <= 690 && Y <= 110){
+            showAlertDialog(R.layout.popup_layout, 25);
+        }else if (X <= 690 && Y <= 170){
+            showAlertDialog(R.layout.popup_layout, 25);
+        }else if (X <= 690 && Y <= 245){
+            showAlertDialog(R.layout.popup_layout, 25);
+        }else if (X <= 690 && Y <= 315){
+            showAlertDialog(R.layout.popup_layout, 25);
+        }else if (X <= 690 && Y <= 380){
+            showAlertDialog(R.layout.popup_layout, 26);
+        }else if (X <= 690 && Y <= 450){
+            showAlertDialog(R.layout.popup_layout, 26);
+        }else if (X <= 690 && Y <= 530){
+            showAlertDialog(R.layout.popup_layout, 26);
+        }else if (X <= 690 && Y <= 580){
+            showAlertDialog(R.layout.popup_layout, 26);
+        }else if (X <= 300 && Y <= 645){
+            showAlertDialog(R.layout.popup_layout, 27);
+        }else if (X <= 690 && Y <= 645){
+            showAlertDialog(R.layout.popup_layout, 26);
+        }else if (X <= 690 && Y <= 710){
+            showAlertDialog(R.layout.popup_layout, 27);
+        }else if (X <= 690 && Y <= 780){
+            showAlertDialog(R.layout.popup_layout, 27);
+        }else if (X <= 690 && Y <= 855){
+            showAlertDialog(R.layout.popup_layout, 28);
+        }else if (X <= 125 && Y <= 925){
+            showAlertDialog(R.layout.popup_layout, 29);
+        }else if (X <= 690 && Y <= 920){
+            showAlertDialog(R.layout.popup_layout, 28);
+        }else if (X <= 690 && Y <= 990){
+            showAlertDialog(R.layout.popup_layout, 29);
+        }else if (X <= 690 && Y <= 1065){
+            showAlertDialog(R.layout.popup_layout, 29);
+        }
+    }
+
+        //For 1080p+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void alFatihahXhdpiVer2(){
         //Get coordinate X and Y
@@ -700,25 +1094,25 @@ public class TajwidSliderAdapter extends PagerAdapter {
         } else if (X <= 790 && Y <= 540) {
             showAlertDialog(R.layout.popup_layout, 1);
         } else if (X <= 380 && Y <= 660) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 3", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 3);
         } else if (X <= 830 && Y <= 660) {
             showAlertDialog(R.layout.popup_layout, 2);
         } else if (X <= 620 && Y <= 790) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 4", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 4);
         } else if (X <= 830 && Y <= 790) {
-            Toast.makeText(context, "Al-Fatihah | Ayat : 3", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 3);
         } else if (X <= 830 && Y <= 910) {
-            Toast.makeText(context, "Al-Fatihah | Ayat : 5", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 5);
         } else if (X <= 400 && Y <= 1025) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 7);
         } else if (X <= 830 && Y <= 1025) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 6", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 6);
         } else if (X <= 830 && Y <= 1160) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 7);
         } else if (X <= 370 && Y <= 1275) {
             //Do nothing
         } else if (X <= 725 && Y <= 1275) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 7);
         }
     }
 
@@ -736,25 +1130,213 @@ public class TajwidSliderAdapter extends PagerAdapter {
         } else if (X <= 790 && Y <= 540) {
             showAlertDialog(R.layout.popup_layout, 1);
         } else if (X <= 380 && Y <= 660) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 3", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 3);
         } else if (X <= 830 && Y <= 660) {
             showAlertDialog(R.layout.popup_layout, 2);
         } else if (X <= 620 && Y <= 790) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 4", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 4);
         } else if (X <= 830 && Y <= 790) {
-            Toast.makeText(context, "Al-Fatihah | Ayat : 3", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 3);
         } else if (X <= 830 && Y <= 910) {
-            Toast.makeText(context, "Al-Fatihah | Ayat : 5", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 5);
         } else if (X <= 400 && Y <= 1025) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 7);
         } else if (X <= 830 && Y <= 1025) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 6", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 6);
         } else if (X <= 830 && Y <= 1160) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 7);
         } else if (X <= 370 && Y <= 1275) {
             //Do nothing
         } else if (X <= 725 && Y <= 1275) {
-            Toast.makeText(context, "Al-Fatihaa | Ayat : 7", Toast.LENGTH_SHORT).show();
+            showAlertDialog(R.layout.popup_layout, 7);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void alBaqarahPage2XhdpiVer2(){
+        int X = a, Y = b;
+
+        if (X <= 1075 && Y <= 400){
+            //Do nothing
+        }else if (X <= 235 && Y <= 1670){
+            //Do nothing
+        }else if (X <= 1015 && Y <= 540){
+            showAlertDialog(R.layout.popup_layout, 0);
+        } else if (X <= 695 && Y <= 665){
+            showAlertDialog(R.layout.popup_layout, 2);
+        }else if (X <= 827 && Y <= 675){
+            showAlertDialog(R.layout.popup_layout, 1);
+        }else if (X <= 650 && Y <= 790){
+            showAlertDialog(R.layout.popup_layout, 3);
+        }else if (X <= 827 && Y <= 790){
+            showAlertDialog(R.layout.popup_layout, 2);
+        }else if (X <= 827 && Y <= 920){
+            showAlertDialog(R.layout.popup_layout, 3);
+        }else if (X <= 827 && Y <= 1050){
+            showAlertDialog(R.layout.popup_layout, 4);
+        }else if (X <= 400 && Y <= 1170){
+            showAlertDialog(R.layout.popup_layout, 5);
+        }else if (X <= 827 && Y <= 1170){
+            showAlertDialog(R.layout.popup_layout, 4);
+        }else if (X <= 827 && Y <= 1300){
+            showAlertDialog(R.layout.popup_layout, 5);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void alBaqarahPage3XhdpiVer2(){
+        int X = a, Y = b;
+
+        if(X <= 1070 && Y <= 60){
+            //Do nothing
+        }else if (X <= 57 && Y <= 1670){
+            //Do nothing
+        }else if (X <= 1015 && Y <= 165){
+            showAlertDialog(R.layout.popup_layout, 6);
+        }else if (X <= 740 && Y <= 270){
+            showAlertDialog(R.layout.popup_layout, 7);
+        }else if (X <= 1015 && Y <= 270){
+            showAlertDialog(R.layout.popup_layout, 6);
+        }else if (X <= 270 && Y <= 370){
+            showAlertDialog(R.layout.popup_layout, 8);
+        }else if (X <= 1015 && Y <= 370){
+            showAlertDialog(R.layout.popup_layout, 7);
+        }else if (X <= 1015 && Y <= 470){
+            showAlertDialog(R.layout.popup_layout, 8);
+        }else if (X <= 1015 && Y <= 570){
+            showAlertDialog(R.layout.popup_layout, 9);
+        }else if (X <= 705 && Y <= 675){
+            showAlertDialog(R.layout.popup_layout, 10);
+        }else if (X <= 1015 && Y <= 675){
+            showAlertDialog(R.layout.popup_layout, 9);
+        }else if (X <= 300 && Y <= 775){
+            showAlertDialog(R.layout.popup_layout, 11);
+        }else if (X <= 1015 && Y <= 775){
+            showAlertDialog(R.layout.popup_layout, 10);
+        }else if (X <= 1015 && Y <= 880){
+            showAlertDialog(R.layout.popup_layout, 11);
+        }else if (X <= 215 && Y <= 980){
+            showAlertDialog(R.layout.popup_layout, 13);
+        }else if (X <= 1015 && Y <= 980){
+            showAlertDialog(R.layout.popup_layout, 12);
+        }else if (X <= 1015 && Y <= 1070){
+            showAlertDialog(R.layout.popup_layout, 13);
+        }else if (X <= 255 && Y <= 1180){
+            showAlertDialog(R.layout.popup_layout, 14);
+        }else if (X <= 1015 && Y <= 1180){
+            showAlertDialog(R.layout.popup_layout, 13);
+        }else if (X <= 1015 && Y <= 1285){
+            showAlertDialog(R.layout.popup_layout, 14);
+        }else if (X <= 470 && Y <= 1385){
+            showAlertDialog(R.layout.popup_layout, 15);
+        }else if (X <= 1015 && Y <= 1385){
+            showAlertDialog(R.layout.popup_layout, 14);
+        }else if (X <= 580 && Y <= 1490){
+            showAlertDialog(R.layout.popup_layout, 16);
+        }else if (X <= 1015 && Y <= 1490){
+            showAlertDialog(R.layout.popup_layout, 15);
+        }else if (X <= 1015 && Y <= 1600){
+            showAlertDialog(R.layout.popup_layout, 16);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void alBaqarahPage4XhdpiVer2(){
+        int X = a, Y = b;
+
+        if (X <= 1070  && Y <= 60){
+            //Do nothing
+        }else if (X <= 57 && Y <= 1670){
+            //Do nothing
+        }else if (X <= 1015 && Y <= 165){
+            showAlertDialog(R.layout.popup_layout, 17);
+        }else if (X <= 140 && Y <= 275){
+            showAlertDialog(R.layout.popup_layout, 18);
+        }else if (X <= 1015 && Y <= 275){
+            showAlertDialog(R.layout.popup_layout, 17);
+        }else if (X <= 495 && Y <= 370){
+            showAlertDialog(R.layout.popup_layout, 19);
+        }else if (X <= 1015 && Y <= 370){
+            showAlertDialog(R.layout.popup_layout, 18);
+        }else if (X <= 1015 && Y <= 475){
+            showAlertDialog(R.layout.popup_layout, 19);
+        }else if (X <= 350 && Y <= 575){
+            showAlertDialog(R.layout.popup_layout, 20);
+        }else if (X <= 1015 && Y <= 575){
+            showAlertDialog(R.layout.popup_layout, 19);
+        }else if (X <= 1015 && Y <= 670){
+            showAlertDialog(R.layout.popup_layout, 20);
+        }else if (X <= 1015 && Y <= 780){
+            showAlertDialog(R.layout.popup_layout, 20);
+        }else if (X <= 730 && Y <= 870){
+            showAlertDialog(R.layout.popup_layout, 21);
+        }else if (X <= 1015 && Y <= 870){
+            showAlertDialog(R.layout.popup_layout, 20);
+        }else if (X <= 350 && Y <= 980){
+            showAlertDialog(R.layout.popup_layout, 22);
+        }else if (X <= 1015 && Y <= 980){
+            showAlertDialog(R.layout.popup_layout, 21);
+        }else if (X <= 1015 && Y <= 1070){
+            showAlertDialog(R.layout.popup_layout, 22);
+        }else if (X <= 1015 && Y <= 1170){
+            showAlertDialog(R.layout.popup_layout, 22);
+        }else if (X <= 725 && Y <= 1290){
+            showAlertDialog(R.layout.popup_layout, 23);
+        }else if (X <= 1015 && Y <= 1290){
+            showAlertDialog(R.layout.popup_layout, 22);
+        }else if (X <= 1015 && Y <= 1385){
+            showAlertDialog(R.layout.popup_layout, 23);
+        }else if (X <= 620 && Y <= 1485){
+            showAlertDialog(R.layout.popup_layout, 24);
+        }else if (X <= 1015 && Y <= 1485){
+            showAlertDialog(R.layout.popup_layout, 23);
+        }else if (X <= 1015 && Y <= 1590){
+            showAlertDialog(R.layout.popup_layout, 24);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void alBaqarahPage5XhdpiVer2(){
+        int X = a, Y = b;
+
+        if (X <= 1070 && Y <= 60){
+            //Do nothing
+        }else if (X <= 57 && Y <= 1670){
+            //Do nothing
+        }else if (X <= 1015 && Y <= 165){
+            showAlertDialog(R.layout.popup_layout, 25);
+        }else if (X <= 1015 && Y <= 275){
+            showAlertDialog(R.layout.popup_layout, 25);
+        }else if (X <= 1015 && Y <= 360){
+            showAlertDialog(R.layout.popup_layout, 25);
+        }else if (X <= 1015 && Y <= 470){
+            showAlertDialog(R.layout.popup_layout, 25);
+        }else if (X <= 1015 && Y <= 565){
+            showAlertDialog(R.layout.popup_layout, 26);
+        }else if (X <= 1015 && Y <= 670){
+            showAlertDialog(R.layout.popup_layout, 26);
+        }else if (X <= 1015 && Y <= 780){
+            showAlertDialog(R.layout.popup_layout, 26);
+        }else if (X <= 1015 && Y <= 875){
+            showAlertDialog(R.layout.popup_layout, 26);
+        }else if (X <= 420 && Y <= 970){
+            showAlertDialog(R.layout.popup_layout, 27);
+        }else if (X <= 1015 && Y <= 970){
+            showAlertDialog(R.layout.popup_layout, 26);
+        }else if (X <= 1015 && Y <= 1080){
+            showAlertDialog(R.layout.popup_layout, 27);
+        }else if (X <= 1015 && Y <= 1180){
+            showAlertDialog(R.layout.popup_layout, 27);
+        }else if (X <= 1015 && Y <= 1290){
+            showAlertDialog(R.layout.popup_layout, 28);
+        }else if (X <= 135 && Y <= 1380){
+            showAlertDialog(R.layout.popup_layout, 29);
+        }else if (X <= 1015 && Y <= 1380){
+            showAlertDialog(R.layout.popup_layout, 28);
+        }else if (X <= 1015 && Y <= 1480){
+            showAlertDialog(R.layout.popup_layout, 29);
+        }else if (X <= 1015 && Y <= 1600){
+            showAlertDialog(R.layout.popup_layout, 29);
         }
     }
 }

@@ -41,11 +41,11 @@ public class help extends Fragment {
 
         //Make array list
         arrayLstView = new ArrayList<>();
-        arrayLstView.add("Tentang Menu");
-        arrayLstView.add("Penggunaan Navigasi");
-        arrayLstView.add("Penggunaan Bookmark");
-        arrayLstView.add("Penggunaan Menu Tajwid");
-        arrayLstView.add("Kontak Developer");
+        arrayLstView.add("Tentang Menu                                                           ");
+        arrayLstView.add("Penggunaan Navigasi                                                    ");
+        arrayLstView.add("Penggunaan Bookmark                                                    ");
+        arrayLstView.add("Penggunaan Menu Tajwid                                                 ");
+        arrayLstView.add("Kontak Developer                                                       ");
 
         //Set array adapter
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, arrayLstView);
@@ -58,7 +58,7 @@ public class help extends Fragment {
     }
 
     /**
-    *Method for doing click listener at card view
+    *Method click listener for card view
     */
     public void ListViewClicked(ListView listView){
 

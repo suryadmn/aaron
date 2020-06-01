@@ -21,6 +21,10 @@ public class ContentRepository {
         new InsertContentAsynTask(contentDao).execute(content);
     }
 
+    public void update(Content content){
+        new UpdateContentAsynTask(contentDao).execute(content);
+    }
+
     public void delete(Content content) {
         new DeleteContentAsynTask(contentDao).execute(content);
     }
@@ -48,8 +52,23 @@ public class ContentRepository {
         }
     }
 
+    /**-----=====Update data=====-----*/
+    private static class UpdateContentAsynTask extends AsyncTask<Content, Void, Void> {
+        private ContentDao contentDao;
 
-    /**-----=====For delete item content=====-----*/
+        private UpdateContentAsynTask(ContentDao contentDao) {
+            this.contentDao = contentDao;
+        }
+
+        @Override
+        protected Void doInBackground(Content... contents) {
+            contentDao.update(contents[0]);
+            return null;
+        }
+    }
+
+
+    /**-----=====For delete selected item content=====-----*/
     private static class DeleteContentAsynTask extends AsyncTask<Content, Void, Void> {
         private ContentDao contentDao;
 

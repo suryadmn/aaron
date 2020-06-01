@@ -3,13 +3,13 @@ package com.simpleMan.aaron;
 public class Model {
 
     private int id;
-    private String arabtajwid;
-    private String penjelasantajwid;
+    private String arab;
+    private String penjelasan;
 
-    public Model(int id, String arabtajwid, String penjelasantajwid) {
+    public Model(int id, String arab, String penjelasan) {
         this.id = id;
-        this.arabtajwid = arabtajwid;
-        this.penjelasantajwid = penjelasantajwid;
+        this.arab = arab;
+        this.penjelasan = penjelasan;
     }
 
     public int getId() {
@@ -17,10 +17,10 @@ public class Model {
     }
 
     public String getArabtajwid() {
-        return arabtajwid;
+        return arab;
     }
 
     public String getPenjelasantajwid() {
-        return penjelasantajwid;
+        return penjelasan;
     }
 }
